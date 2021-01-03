@@ -1,16 +1,16 @@
 package elo;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import kong.unirest.Cookies;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
+import kong.unirest.*;
+
+import java.util.Map;
 
 public class Authentication {
-    public static String getAccessToken(Cookies cookies, String username, String password) {
+    static String getAccessToken(Cookies cookies, String username, String password) {
         String[] keys = {"type", "username", "password"};
-        String[] values = {"auth", "", ""};
+        String[] values = {"auth", username, password};
 
         HttpResponse accessTokenRequest = Unirest.put("https://auth.riotgames.com/api/v1/authorization")
                 .header("Content-type", "application/json")
@@ -19,8 +19,9 @@ public class Authentication {
                 .asJson();
         String accessTokenString = accessTokenRequest.getBody().toString();
 
+        Gson gson = new Gson();
 
-        return "";
+        return accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
     }
 
     static Cookies getCookies() {
@@ -28,8 +29,33 @@ public class Authentication {
         String[] values = {"play-valorant-web-prod", "1", "https://beta.playvalorant.com/opt_in", "token id_token", "account openid"};
         HttpResponse<JsonNode> cookieRequest = Unirest.post("https://auth.riotgames.com/api/v1/authorization")
                 .body(getJson(keys, values)).header("Content-type", "application/json").asJson();
-//        System.out.println(cookieRequest.getStatusText());
         return cookieRequest.getCookies();
+    }
+
+    static String getEntitlement(String accessToken) {
+        HttpResponse entitlementRequest = Unirest.post("https://entitlements.auth.riotgames.com/api/token/v1")
+                .header("Content-type", "application/json")
+                .header("Authorization", accessToken)
+                .body("{}")
+                .asJson();
+
+        Gson gson = new Gson();
+        Map<String, String> json = gson.fromJson(entitlementRequest.getBody().toString(), Map.class);
+
+        return json.get("entitlements_token");
+    }
+
+    static String getUserID(String accessToken) {
+        HttpResponse userIDRequest = Unirest.post("https://auth.riotgames.com/userinfo")
+                .header("Content-type", "application/json")
+                .header("Authorization", accessToken)
+                .body("{}")
+                .asJson();
+
+        Gson gson = new Gson();
+        Map<String, String> json = gson.fromJson(userIDRequest.getBody().toString(), Map.class);
+
+        return json.get("sub");
     }
 
     private static JsonObject getJson(String[] keys, String[] values)  {
