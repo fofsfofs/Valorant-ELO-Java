@@ -1,19 +1,26 @@
 package elo;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kong.unirest.Cookies;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.Scanner;
 
 public class Login {
 
@@ -65,7 +72,7 @@ public class Login {
         Label userName = new Label("Riot ID:");
         grid.add(userName, 0, 1);
 
-        TextField userTextField = new TextField();
+        TextField userTextField = new TextField("");
         grid.add(userTextField, 1, 1);
 
         Label pw = new Label("Password:");
@@ -74,27 +81,35 @@ public class Login {
         PasswordField pwBox = new PasswordField();
         grid.add(pwBox, 1, 2);
 
+        CheckBox cb = new CheckBox("Remember login");
+        grid.add(cb, 0, 5);
+
+        if ((new File("profile.txt")).exists()) {
+            setRemembered();
+            userTextField.setText(username);
+            pwBox.setText(password);
+            cb.setSelected(true);
+        }
+
         Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 4);
 
-        final Text actiontarget = new Text();
-        grid.add(actiontarget, 1, 6);
 
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent e) {
-                actiontarget.setFill(Color.GREY);
-                Login.setUsername(userTextField.getText());
-                Login.setPass(pwBox.getText());
+        btn.setOnAction(e -> {
+            Login.setUsername(userTextField.getText());
+            Login.setPass(pwBox.getText());
+            if (cb.isSelected() && !(new File("profile.txt")).exists()) {
+                rememberLogin();
+                authenticate();
+            } else {
                 authenticate();
             }
         });
 
-        Scene login = new Scene(grid, 300, 275);
+        Scene login = new Scene(grid, 400, 275);
         stage.setScene(login);
         stage.setTitle("Login");
         stage.show();
@@ -106,6 +121,37 @@ public class Login {
 
     private static String getUsername() {
         return username;
+    }
+
+    private static void setRemembered() {
+        String[] data = new String[2];
+        try {
+            File file = new File("profile.txt");
+            Scanner scanner = new Scanner(file);
+            for (int i = 0; i < data.length; i++) {
+                data[i] = scanner.nextLine();
+            }
+            scanner.close();
+        } catch (IOException e) {
+
+        }
+
+        Login.setUsername(data[0]);
+        byte[] decodedBytes = Base64.getDecoder().decode(data[1]);
+        String decodedString = new String(decodedBytes);
+        Login.setPass(decodedString);
+    }
+
+    private static void rememberLogin() {
+        try {
+            FileWriter fileWriter = new FileWriter("profile.txt");
+            fileWriter.write(String.format("%s\n%s", username, Base64.getEncoder().encodeToString(password.getBytes())));
+            fileWriter.close();
+            Path path = Paths.get("profile.txt");
+            Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+
+        }
     }
 
     private static void setPass(String pass) {
