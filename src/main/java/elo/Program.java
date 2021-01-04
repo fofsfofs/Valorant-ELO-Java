@@ -13,11 +13,11 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) {
-        String username = "torkoal64";
+        String username = "username";
         String accessToken;
         Cookies cookies = Authentication.getCookies();
         try {
-            accessToken = Authentication.getAccessToken(cookies, username, "jubbathehut221");
+            accessToken = Authentication.getAccessToken(cookies, username, "password");
             String entitlementToken = Authentication.getEntitlement(accessToken);
             String userID = Authentication.getUserID(accessToken);
 
