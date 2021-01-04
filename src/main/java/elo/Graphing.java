@@ -60,9 +60,9 @@ public class Graphing {
                 for (XYChart.Data data : tempElo) {
                     s.getData().add(data);
                     if ((Integer)data.getXValue() == 1) {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", 0));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
                     } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss.get((Integer) data.getXValue()-2)));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue()-2)));
                     }
                     counter++;
                 }
@@ -126,22 +126,42 @@ public class Graphing {
         Platform.runLater(() -> {
             for (int i = 0; i < series.size(); i++) {
                 ArrayList<XYChart.Data> pls = new ArrayList<>(series.get(i).getData());
-                if (i % 2 == 0) {
-                    for (XYChart.Data data : pls) {
-                        data.getNode().setStyle("-fx-background-color: green, white;\n"
-                                + "    -fx-background-insets: 0, 2;\n"
-                                + "    -fx-background-radius: 5px;\n"
-                                + "    -fx-padding: 5px;");
+                if(gainLoss.get(0) >= 0) {
+                    if (i % 2 == 0) {
+                        for (XYChart.Data data : pls) {
+                            data.getNode().setStyle("-fx-background-color: green, white;\n"
+                                    + "    -fx-background-insets: 0, 2;\n"
+                                    + "    -fx-background-radius: 5px;\n"
+                                    + "    -fx-padding: 5px;");
+                        }
+                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
+                    } else {
+                        for (XYChart.Data data : pls) {
+                            data.getNode().setStyle("-fx-background-color: red, white;\n"
+                                    + "    -fx-background-insets: 0, 2;\n"
+                                    + "    -fx-background-radius: 5px;\n"
+                                    + "    -fx-padding: 5px;");
+                        }
+                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
                     }
-                    series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
                 } else {
-                    for (XYChart.Data data : pls) {
-                        data.getNode().setStyle("-fx-background-color: red, white;\n"
-                                + "    -fx-background-insets: 0, 2;\n"
-                                + "    -fx-background-radius: 5px;\n"
-                                + "    -fx-padding: 5px;");
+                    if (i % 2 == 0) {
+                        for (XYChart.Data data : pls) {
+                            data.getNode().setStyle("-fx-background-color: red, white;\n"
+                                    + "    -fx-background-insets: 0, 2;\n"
+                                    + "    -fx-background-radius: 5px;\n"
+                                    + "    -fx-padding: 5px;");
+                        }
+                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
+                    } else {
+                        for (XYChart.Data data : pls) {
+                            data.getNode().setStyle("-fx-background-color: green, white;\n"
+                                    + "    -fx-background-insets: 0, 2;\n"
+                                    + "    -fx-background-radius: 5px;\n"
+                                    + "    -fx-padding: 5px;");
+                        }
+                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
                     }
-                    series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
                 }
             }
         });

@@ -12,9 +12,9 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) {
-        String username = "f0fsf0fs";
+        String username = "username";
         Cookies cookies = Authentication.getCookies();
-        String accessToken = Authentication.getAccessToken(cookies, username, "0a8O93ImH$EC");
+        String accessToken = Authentication.getAccessToken(cookies, username, "password");
         String entitlementToken = Authentication.getEntitlement(accessToken);
         String userID = Authentication.getUserID(accessToken);
 
