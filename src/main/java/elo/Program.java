@@ -2,6 +2,7 @@ package elo;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import kong.unirest.Cookies;
 
@@ -28,9 +29,10 @@ public class Program extends Application {
             stage.setScene(login);
             stage.setTitle("Login");
             stage.show();
-            boolean credentialCheck = false;
+            boolean credentialCheck = true;
             if (credentialCheck) {
                 stage.setScene(scene);
+                stage.getIcons().add(new Image(Program.class.getResourceAsStream("../resources/"+rank.getCurrentRank()+".png")));
                 stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
                 stage.setResizable(false);
                 stage.show();
