@@ -14,7 +14,7 @@ public class Program extends Application {
     public void start(Stage stage) {
         String username = "";
         Cookies cookies = Authentication.getCookies();
-        String accessToken = "Bearer " + Authentication.getAccessToken(cookies, username, "");
+        String accessToken = Authentication.getAccessToken(cookies, username, "");
         String entitlementToken = Authentication.getEntitlement(accessToken);
         String userID = Authentication.getUserID(accessToken);
 

@@ -21,7 +21,7 @@ public class Authentication {
 
         Gson gson = new Gson();
 
-        return accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
+        return "Bearer " + accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
     }
 
     static Cookies getCookies() {
