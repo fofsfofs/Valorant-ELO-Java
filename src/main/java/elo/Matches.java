@@ -20,11 +20,13 @@ public class Matches {
     private String et;
     private ArrayList newMatches = new ArrayList();
     private String uID;
+    private String user;
 
-    public Matches(String accessToken, String entitlementToken, String userID) {
+    public Matches(String accessToken, String entitlementToken, String userID, String username) {
         this.at = accessToken;
         this.et = entitlementToken;
         this.uID = userID;
+        this.user = username;
         updateMatchHistory();
     }
 
@@ -51,8 +53,15 @@ public class Matches {
             ArrayList matchHistory = gson.fromJson(reader, ArrayList.class);
             reader.close();
             return  matchHistory;
-        } catch (IOException e) {
+        } catch (IOException e1) {
+            try {
+                Writer writer = new FileWriter(String.format("%s.json", user));
+                gson.toJson(new ArrayList<>(), writer);
+                writer.close();
+                return new ArrayList();
+            } catch (IOException e2) {
 
+            }
         }
         return null;
     }
@@ -68,11 +77,12 @@ public class Matches {
             }
         }
 
+
         newMatches.addAll(matchHistory);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
-            Writer writer = new FileWriter("f0fsf0fs.json");
+            Writer writer = new FileWriter(String.format("%s.json", user));
             gson.toJson(newMatches, writer);
             writer.close();
         } catch (IOException e) {
