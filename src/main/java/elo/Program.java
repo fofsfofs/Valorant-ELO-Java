@@ -17,7 +17,7 @@ public class Program extends Application {
         String accessToken;
         Cookies cookies = Authentication.getCookies();
         try {
-            accessToken = Authentication.getAccessToken(cookies, username, "doggo456");
+            accessToken = Authentication.getAccessToken(cookies, username, "jubbathehut221");
             String entitlementToken = Authentication.getEntitlement(accessToken);
             String userID = Authentication.getUserID(accessToken);
 
@@ -32,7 +32,7 @@ public class Program extends Application {
             boolean credentialCheck = true;
             if (credentialCheck) {
                 stage.setScene(scene);
-                stage.getIcons().add(new Image(Program.class.getResourceAsStream("../resources/"+rank.getCurrentRank()+".png")));
+                stage.getIcons().add(new Image(Program.class.getResourceAsStream("/"+ rank.getCurrentRank()+".png")));
                 stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
                 stage.setResizable(false);
                 stage.show();
