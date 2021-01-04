@@ -9,6 +9,9 @@ public class Program {
         String entitlementToken = Authentication.getEntitlement(accessToken);
         String userID = Authentication.getUserID(accessToken);
 
+        Matches m = new Matches(accessToken, entitlementToken, userID);
+        m.updateMatchHistory();
 
+//        m.loadHistory();
     }
 }
