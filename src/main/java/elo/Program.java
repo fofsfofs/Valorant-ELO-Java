@@ -7,16 +7,16 @@ import kong.unirest.Cookies;
 
 public class Program extends Application {
     public static  void main(String[] args) {
-        launch(args);
+//        launch(args);
     }
 
     @Override
     public void start(Stage stage) {
-        String username = "";
+        String username = "f0fsf0fs";
         String accessToken;
         Cookies cookies = Authentication.getCookies();
         try {
-            accessToken = Authentication.getAccessToken(cookies, username, "");
+            accessToken = Authentication.getAccessToken(cookies, username, "0a8O93ImH$EC");
             String entitlementToken = Authentication.getEntitlement(accessToken);
             String userID = Authentication.getUserID(accessToken);
 
