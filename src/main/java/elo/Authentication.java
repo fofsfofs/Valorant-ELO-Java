@@ -25,6 +25,7 @@ public class Authentication {
     }
 
     static Cookies getCookies() {
+        Unirest.config().enableCookieManagement(false);
         String[] keys = {"client_id", "nonce", "redirect_uri", "response_type", "scope"};
         String[] values = {"play-valorant-web-prod", "1", "https://beta.playvalorant.com/opt_in", "token id_token", "account openid"};
         HttpResponse<JsonNode> cookieRequest = Unirest.post("https://auth.riotgames.com/api/v1/authorization")
