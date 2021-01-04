@@ -23,7 +23,7 @@ public class Program extends Application {
 
         Scene scene = Graphing.getLineChart(rank);
         stage.setScene(scene);
-        stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getRank(), rank.getCurrentRP()));
+        stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
         stage.setResizable(false);
         stage.show();
     }

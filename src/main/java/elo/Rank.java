@@ -86,9 +86,18 @@ public class Rank {
         return gainLoss;
     }
 
-    public String getRank() {
+    public String getCurrentRank() {
         for (Ranks r: Ranks.values()) {
             if ((getCurrentELO() / 100) == r.minELO) {
+                return r.name;
+            }
+        }
+        return "";
+    }
+
+    public String getRank(int elo) {
+        for (Ranks r: Ranks.values()) {
+            if ((elo / 100) == r.minELO) {
                 return r.name;
             }
         }
