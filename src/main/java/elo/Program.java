@@ -12,19 +12,25 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) {
-        String username = "username";
+        String username = "";
+        String accessToken;
         Cookies cookies = Authentication.getCookies();
-        String accessToken = Authentication.getAccessToken(cookies, username, "password");
-        String entitlementToken = Authentication.getEntitlement(accessToken);
-        String userID = Authentication.getUserID(accessToken);
+        try {
+            accessToken = Authentication.getAccessToken(cookies, username, "");
+            String entitlementToken = Authentication.getEntitlement(accessToken);
+            String userID = Authentication.getUserID(accessToken);
 
-        Matches m = new Matches(accessToken, entitlementToken, userID, username);
-        Rank rank = new Rank(m);
+            Matches m = new Matches(accessToken, entitlementToken, userID, username);
+            Rank rank = new Rank(m);
 
-        Scene scene = Graphing.getLineChart(rank);
-        stage.setScene(scene);
-        stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
-        stage.setResizable(false);
-        stage.show();
+            Scene scene = Graphing.getLineChart(rank);
+            stage.setScene(scene);
+            stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
+            stage.setResizable(false);
+            stage.show();
+        } catch (StringIndexOutOfBoundsException e) {
+            System.out.println("Incorrect login!");
+        }
+
     }
 }
