@@ -27,15 +27,16 @@ public class Graphing {
         List<Integer> ranks = Arrays.asList(655, 674, 700, 743, 775, 806, 839, 816, 800, 800, 768, 776, 758, 776, 772, 740);
         List<XYChart.Series> series = new ArrayList<>();
         List<XYChart.Data> tempElo = new ArrayList<>();
-        int[] gainLoss = {19, 26, 43, 32, 31, 33, -23, -16, 0, -32, 8, -18, 18, -4, -32};
+
+        List<Integer> gainLoss = Arrays.asList(19, 26, 43, 32, 31, 33, -23, -16, 0, -32, 8, -18, 18, -4, -32);
 
         int iterate = 0;
         int counter = 1;
-        while (iterate < gainLoss.length) {
-            while (gainLoss[iterate] >= 0) {
+        while (iterate < gainLoss.size()) {
+            while (gainLoss.get(iterate) >= 0) {
                 tempElo.add(new XYChart.Data(iterate + 1, ranks.get(iterate)));
                 tempElo.add(new XYChart.Data(iterate + 2, ranks.get(iterate + 1)));
-                if (iterate + 1 < gainLoss.length) {
+                if (iterate + 1 < gainLoss.size()) {
                     iterate++;
                 } else {
                     break;
@@ -48,17 +49,17 @@ public class Graphing {
                     if ((Integer)data.getXValue() == 1) {
                         data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", 0));
                     } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss[(Integer) data.getXValue()-2]));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss.get((Integer) data.getXValue()-2)));
                     }
                     counter++;
                 }
                 series.add(s);
                 tempElo.clear();
             }
-            while (gainLoss[iterate] < 0) {
+            while (gainLoss.get(iterate) < 0) {
                 tempElo.add(new XYChart.Data(iterate + 1, ranks.get(iterate)));
                 tempElo.add(new XYChart.Data(iterate + 2, ranks.get(iterate + 1)));
-                if (iterate + 1 < gainLoss.length) {
+                if (iterate + 1 < gainLoss.size()) {
                     iterate++;
                 } else {
                     break;
@@ -71,24 +72,24 @@ public class Graphing {
                     if ((Integer)data.getXValue() == 1) {
                         data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", 0));
                     } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss[(Integer) data.getXValue()-2]));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss.get((Integer) data.getXValue()-2)));
                     }
                     counter++;
                 }
                 series.add(s);
                 tempElo.clear();
             }
-            if (iterate == gainLoss.length - 1) {
-                if ((gainLoss[iterate] < 0 && gainLoss[iterate - 1] >= 0) || gainLoss[iterate] >= 0 && gainLoss[iterate - 1] < 0) {
+            if (iterate == gainLoss.size() - 1) {
+                if ((gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) || gainLoss.get(iterate) >= 0 && gainLoss.get(iterate - 1) < 0) {
                     tempElo.add(new XYChart.Data(iterate + 1, ranks.get(iterate)));
                     tempElo.add(new XYChart.Data(iterate + 2, ranks.get(iterate + 1)));
                     XYChart.Series s = new XYChart.Series();
                     XYChart.Series temp = new XYChart.Series();
                     for (XYChart.Data data : tempElo) {
                         s.getData().add(data);
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss[(Integer) data.getXValue()-2]));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), "variable", gainLoss.get((Integer) data.getXValue()-2)));
                     }
-                    if (gainLoss[iterate] < 0 && gainLoss[iterate - 1] >= 0) {
+                    if (gainLoss.get(iterate) < 0 && gainLoss.get(iterate-1) >= 0) {
                         series.add(temp);
                     }
                     series.add(s);
