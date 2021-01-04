@@ -24,10 +24,17 @@ public class Program extends Application {
             Rank rank = new Rank(m);
 
             Scene scene = Graphing.getLineChart(rank);
-            stage.setScene(scene);
-            stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
-            stage.setResizable(false);
+            Scene login = Login.createLogin();
+            stage.setScene(login);
+            stage.setTitle("Login");
             stage.show();
+            boolean credentialCheck = false;
+            if (credentialCheck) {
+                stage.setScene(scene);
+                stage.setTitle(String.format("%s | %s | RP: %d", username, rank.getCurrentRank(), rank.getCurrentRP()));
+                stage.setResizable(false);
+                stage.show();
+            }
         } catch (StringIndexOutOfBoundsException e) {
             System.out.println("Incorrect login!");
         }
