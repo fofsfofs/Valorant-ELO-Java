@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
@@ -45,6 +46,7 @@ public class Login {
 
             Scene scene = Graphing.getLineChart(rank);
             stage.setScene(scene);
+            stage.getIcons().add(new Image(Program.class.getResourceAsStream("/"+ rank.getCurrentRank()+".png")));
             stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
             stage.setResizable(false);
             stage.show();
@@ -58,6 +60,7 @@ public class Login {
     }
 
     private void createLogin() {
+        stage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
         GridPane grid = new GridPane();
 
         grid.setAlignment(Pos.CENTER);
@@ -66,7 +69,7 @@ public class Login {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Text scenetitle = new Text("Valorant ELO Tracker");
-        scenetitle.setFont(Font.font("Tacoma", FontWeight.NORMAL, 20));
+        scenetitle.setFont(Font.font("Tacoma", FontWeight.NORMAL, 30));
         grid.add(scenetitle, 0, 0, 2, 1);
 
         Label userName = new Label("Riot ID:");
