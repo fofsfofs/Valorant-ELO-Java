@@ -18,12 +18,18 @@ import java.util.Map;
 public class Matches {
     private String at;
     private String et;
+    private ArrayList newMatches = new ArrayList();
     private String uID;
 
     public Matches(String accessToken, String entitlementToken, String userID) {
         this.at = accessToken;
         this.et = entitlementToken;
         this.uID = userID;
+        updateMatchHistory();
+    }
+
+    public ArrayList getLatestMatchHistory() {
+        return newMatches;
     }
 
     private ArrayList getMatches() {
@@ -35,7 +41,7 @@ public class Matches {
 
         Gson gson = new Gson();
         Map<String, ArrayList> json = gson.fromJson(matchResponse.getBody().toString(), Map.class);
-        return  json.get("Matches");
+        return json.get("Matches");
     }
 
     private ArrayList loadHistory() {
@@ -51,9 +57,8 @@ public class Matches {
         return null;
     }
 
-    public void updateMatchHistory() {
+    private void updateMatchHistory() {
         ArrayList allMatches = getMatches();
-        ArrayList newMatches = new ArrayList();
         ArrayList matchHistory = loadHistory();
 
         for (int i = 0; i < allMatches.size(); i++) {
