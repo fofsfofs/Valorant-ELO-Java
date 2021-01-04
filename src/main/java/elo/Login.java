@@ -5,20 +5,52 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import kong.unirest.Cookies;
 
 public class Login {
 
-    public static Scene createLogin() {
+    private static String password;
+    private static String username;
+    private Stage stage;
+
+    public Login(Stage s) {
+        this.stage = s;
+        createLogin();
+    }
+
+    private void authenticate() {
+        Cookies cookies = Authentication.getCookies();
+        String accessToken = Authentication.getAccessToken(cookies, Login.getUsername(), Login.getPass());
+        if (!accessToken.equals("")) {
+            String entitlementToken = Authentication.getEntitlement(accessToken);
+            String userID = Authentication.getUserID(accessToken);
+
+            Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername());
+            Rank rank = new Rank(m);
+
+            Scene scene = Graphing.getLineChart(rank);
+            stage.setScene(scene);
+            stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
+            stage.setResizable(false);
+            stage.show();
+        } else {
+            Alert incorrect = new Alert(Alert.AlertType.WARNING);
+            incorrect.setTitle("Incorrect login");
+            incorrect.setHeaderText(null);
+            incorrect.setContentText("Username or password is incorrect!");
+            incorrect.showAndWait();
+        }
+    }
+
+    private void createLogin() {
         GridPane grid = new GridPane();
 
         grid.setAlignment(Pos.CENTER);
@@ -56,16 +88,33 @@ public class Login {
             @Override
             public void handle(ActionEvent e) {
                 actiontarget.setFill(Color.GREY);
-                actiontarget.setText("correct/incorrect");
+                Login.setUsername(userTextField.getText());
+                Login.setPass(pwBox.getText());
+                authenticate();
             }
         });
 
-        return new Scene(grid, 300, 275);
+        Scene login = new Scene(grid, 300, 275);
+        stage.setScene(login);
+        stage.setTitle("Login");
+        stage.show();
     }
 
+    private static String getPass() {
+        return password;
+    }
 
+    private static String getUsername() {
+        return username;
+    }
 
+    private static void setPass(String pass) {
+        password = pass;
+    }
 
+    private static void setUsername(String user) {
+        username = user;
+    }
 
 
 }

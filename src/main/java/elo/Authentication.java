@@ -19,12 +19,15 @@ public class Authentication {
                 .asJson();
         String accessTokenString = accessTokenRequest.getBody().toString();
 
-        Gson gson = new Gson();
-
-        return "Bearer " + accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
+        if (!accessTokenString.equals("{\"type\":\"auth\",\"error\":\"auth_failure\",\"country\":\"can\"}")) {
+            return "Bearer " + accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
+        } else {
+            return "";
+        }
     }
 
     static Cookies getCookies() {
+        Unirest.config().reset();
         Unirest.config().enableCookieManagement(false);
         String[] keys = {"client_id", "nonce", "redirect_uri", "response_type", "scope"};
         String[] values = {"play-valorant-web-prod", "1", "https://beta.playvalorant.com/opt_in", "token id_token", "account openid"};
