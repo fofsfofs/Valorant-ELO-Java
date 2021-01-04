@@ -17,25 +17,25 @@ public class Graphing {
 
     public static Scene getLineChart(Rank rank) {
 
-        List<Integer> ranks = rank.getELOHistory();
+        List<Integer> eloHistory = rank.getELOHistory();
         List<XYChart.Series> series = new ArrayList<>();
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
 
         double upper = 0;
         double lower  = 0;
-        if (((Collections.max(ranks) / 100 + 1) * 100 - Collections.max(ranks)) > 50) {
-            upper =  (Collections.max(ranks) / 100 + 0.5) * 100;
+        if (((Collections.max(eloHistory) / 100 + 1) * 100 - Collections.max(eloHistory)) > 50) {
+            upper =  (Collections.max(eloHistory) / 100 + 0.5) * 100;
         } else {
-            upper = (Collections.max(ranks) / 100 + 1) * 100;
+            upper = (Collections.max(eloHistory) / 100 + 1) * 100;
         }
-        if (((Collections.min(ranks) / 100 + 1) * 100 - Collections.min(ranks)) > 50) {
-            lower =  (Collections.min(ranks) / 100) * 100;
+        if (((Collections.min(eloHistory) / 100 + 1) * 100 - Collections.min(eloHistory)) > 50) {
+            lower =  (Collections.min(eloHistory) / 100) * 100;
         } else {
-            lower = (Collections.min(ranks) / 100 + 0.5) * 100;
+            lower = (Collections.min(eloHistory) / 100 + 0.5) * 100;
         }
 
-        final NumberAxis xAxis = new NumberAxis(0, ranks.size() +  1, 1);
+        final NumberAxis xAxis = new NumberAxis(0, eloHistory.size() +  1, 1);
         final NumberAxis yAxis = new NumberAxis(lower, upper, 100);
         final LineChart<Number, Number> sc = new LineChart<>(xAxis, yAxis);
         xAxis.setLabel("Past Matches");
@@ -47,8 +47,8 @@ public class Graphing {
         int counter = 1;
         while (iterate < gainLoss.size()) {
             while (gainLoss.get(iterate) >= 0) {
-                tempElo.add(new XYChart.Data(iterate + 1, ranks.get(iterate)));
-                tempElo.add(new XYChart.Data(iterate + 2, ranks.get(iterate + 1)));
+                tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
+                tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
                 if (iterate + 1 < gainLoss.size()) {
                     iterate++;
                 } else {
@@ -70,8 +70,8 @@ public class Graphing {
                 tempElo.clear();
             }
             while (gainLoss.get(iterate) < 0) {
-                tempElo.add(new XYChart.Data(iterate + 1, ranks.get(iterate)));
-                tempElo.add(new XYChart.Data(iterate + 2, ranks.get(iterate + 1)));
+                tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
+                tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
 
                 if (iterate + 1 < gainLoss.size()) {
                     iterate++;
@@ -95,8 +95,8 @@ public class Graphing {
             }
             if (iterate == gainLoss.size() - 1) {
                 if ((gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) || gainLoss.get(iterate) >= 0 && gainLoss.get(iterate - 1) < 0) {
-                    tempElo.add(new XYChart.Data(iterate + 1, ranks.get(iterate)));
-                    tempElo.add(new XYChart.Data(iterate + 2, ranks.get(iterate + 1)));
+                    tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
+                    tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
                     XYChart.Series s = new XYChart.Series();
                     XYChart.Series temp = new XYChart.Series();
                     for (XYChart.Data data : tempElo) {
