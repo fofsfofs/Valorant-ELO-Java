@@ -13,16 +13,29 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Updater {
-    static DbxRequestConfig config = DbxRequestConfig.newBuilder("").build();
-    static DbxClientV2 client = new DbxClientV2(config, Secret.dbToken);
+    DbxRequestConfig config = DbxRequestConfig.newBuilder("").build();
+    DbxClientV2 client = new DbxClientV2(config, Secret.dbToken);
     private Login login;
 
     public Updater(Login l) {
         this.login = l;
+        deleteOld();
         updateNeeded();
     }
 
-    private static String getLatestVersionName() {
+    private void deleteOld() {
+        String[] paths;
+        paths = new File(System.getProperty("user.dir")).list();
+        for (String path : paths) {
+            if (path.contains(".jar") && !path.equals(Program.version + ".jar")) {
+                System.out.println(path);
+                File file = new File(path);
+                file.delete();
+            }
+        }
+    }
+
+    private String getLatestVersionName() {
         ListFolderResult result = null;
         try {
             result = client.files().listFolder("");
@@ -33,7 +46,7 @@ public class Updater {
         return file.substring(1);
     }
 
-    private static double getLatestVersionNum() {
+    private double getLatestVersionNum() {
         return Double.parseDouble(getLatestVersionName().substring(13, 16));
     }
 
@@ -49,6 +62,11 @@ public class Updater {
             needUpdate.showAndWait().ifPresent(type -> {
                 if (type == yes) {
                     update();
+                    try {
+                        Process proc = Runtime.getRuntime().exec("java -jar " + getLatestVersionName());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     login.createLogin();
                 }
@@ -58,7 +76,7 @@ public class Updater {
         }
     }
 
-    private static void update() {
+    private void update() {
         try {
             File file = new File(getLatestVersionName());
             FileOutputStream fOut = new FileOutputStream(file);
