@@ -7,7 +7,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +17,25 @@ import java.util.List;
 
 public class Graphing {
 
-    public static Scene getLineChart(Rank rank) {
+    private Stage stage;
+    private Rank rank;
+
+    public Graphing(Stage s, Rank r) {
+        this.stage = s;
+        this.rank = r;
+        createGraph();
+    }
+
+    private void createGraph() {
+        Scene scene = getLineChart(rank);
+        stage.setScene(scene);
+        stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + rank.getCurrentRank() + ".png")));
+        stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    public Scene getLineChart(Rank rank) {
 
         List<Integer> eloHistory = rank.getELOHistory();
         List<XYChart.Series> series = new ArrayList<>();
@@ -23,19 +43,19 @@ public class Graphing {
         List<Integer> gainLoss = rank.getGainLoss();
 
         double upper = 0;
-        double lower  = 0;
+        double lower = 0;
         if (((Collections.max(eloHistory) / 100 + 1) * 100 - Collections.max(eloHistory)) > 50) {
-            upper =  (Collections.max(eloHistory) / 100 + 0.5) * 100;
+            upper = (Collections.max(eloHistory) / 100 + 0.5) * 100;
         } else {
             upper = (Collections.max(eloHistory) / 100 + 1) * 100;
         }
         if (((Collections.min(eloHistory) / 100 + 1) * 100 - Collections.min(eloHistory)) > 50) {
-            lower =  (Collections.min(eloHistory) / 100) * 100;
+            lower = (Collections.min(eloHistory) / 100) * 100;
         } else {
             lower = (Collections.min(eloHistory) / 100 + 0.5) * 100;
         }
 
-        final NumberAxis xAxis = new NumberAxis(0, eloHistory.size() +  1, 1);
+        final NumberAxis xAxis = new NumberAxis(0, eloHistory.size() + 1, 1);
         final NumberAxis yAxis = new NumberAxis(lower, upper, 100);
         final LineChart<Number, Number> sc = new LineChart<>(xAxis, yAxis);
         xAxis.setLabel("Past Matches");
@@ -59,10 +79,10 @@ public class Graphing {
                 XYChart.Series s = new XYChart.Series();
                 for (XYChart.Data data : tempElo) {
                     s.getData().add(data);
-                    if ((Integer)data.getXValue() == 1) {
+                    if ((Integer) data.getXValue() == 1) {
                         data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
                     } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue()-2)));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
                     }
                     counter++;
                 }
@@ -83,10 +103,10 @@ public class Graphing {
                 XYChart.Series s = new XYChart.Series();
                 for (XYChart.Data data : tempElo) {
                     s.getData().add(data);
-                    if ((Integer)data.getXValue() == 1) {
+                    if ((Integer) data.getXValue() == 1) {
                         data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
                     } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue()-2)));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
                     }
                     counter++;
                 }
@@ -101,7 +121,7 @@ public class Graphing {
                     XYChart.Series temp = new XYChart.Series();
                     for (XYChart.Data data : tempElo) {
                         s.getData().add(data);
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue()-2)));
+                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
                     }
 
                     if (gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) {
@@ -126,7 +146,7 @@ public class Graphing {
         Platform.runLater(() -> {
             for (int i = 0; i < series.size(); i++) {
                 ArrayList<XYChart.Data> pls = new ArrayList<>(series.get(i).getData());
-                if(gainLoss.get(0) >= 0) {
+                if (gainLoss.get(0) >= 0) {
                     if (i % 2 == 0) {
                         for (XYChart.Data data : pls) {
                             data.getNode().setStyle("-fx-background-color: green, white;\n"
@@ -186,7 +206,7 @@ public class Graphing {
             });
         }
 
-        private Label createDataThresholdLabel(int x,int value, String rank, int change) {
+        private Label createDataThresholdLabel(int x, int value, String rank, int change) {
             final Label label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank + "\nChange: " + change);
             label.getStyleClass().addAll("default-color8", "chart-line-symbol", "chart-series-line");
             label.setStyle("-fx-font-size: 9; -fx-font-weight: bold;");

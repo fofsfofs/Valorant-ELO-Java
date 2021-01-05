@@ -43,12 +43,8 @@ public class Login {
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername());
             Rank rank = new Rank(m);
 
-            Scene scene = Graphing.getLineChart(rank);
-            stage.setScene(scene);
-            stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + rank.getCurrentRank() + ".png")));
-            stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
-            stage.setResizable(false);
-            stage.show();
+            Graphing graph = new Graphing(stage, rank);
+
         } else {
             Alert incorrect = new Alert(Alert.AlertType.WARNING);
             incorrect.setTitle("Incorrect login");
@@ -124,7 +120,7 @@ public class Login {
         return password;
     }
 
-    private static String getUsername() {
+    public static String getUsername() {
         return username;
     }
 
