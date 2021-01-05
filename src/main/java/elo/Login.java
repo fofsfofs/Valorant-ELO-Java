@@ -31,7 +31,6 @@ public class Login {
 
     public Login(Stage s) {
         this.stage = s;
-        createLogin();
     }
 
     private void authenticate() {
@@ -59,7 +58,7 @@ public class Login {
         }
     }
 
-    private void createLogin() {
+    public void createLogin() {
         stage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
         GridPane grid = new GridPane();
 
