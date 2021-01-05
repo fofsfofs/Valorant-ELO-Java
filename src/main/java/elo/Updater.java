@@ -28,7 +28,6 @@ public class Updater {
         paths = new File(System.getProperty("user.dir")).list();
         for (String path : paths) {
             if (path.contains(".jar") && !path.equals(Program.version + ".jar")) {
-                System.out.println(path);
                 File file = new File(path);
                 file.delete();
             }
@@ -47,7 +46,7 @@ public class Updater {
     }
 
     private double getLatestVersionNum() {
-        return Double.parseDouble(getLatestVersionName().substring(13, 16));
+        return Double.parseDouble(getLatestVersionName().substring(13, getLatestVersionName().indexOf(".jar")));
     }
 
     private void updateNeeded() {
