@@ -46,7 +46,7 @@ public class Login {
 
             Scene scene = Graphing.getLineChart(rank);
             stage.setScene(scene);
-            stage.getIcons().add(new Image(Program.class.getResourceAsStream("/"+ rank.getCurrentRank()+".png")));
+            stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + rank.getCurrentRank() + ".png")));
             stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
             stage.setResizable(false);
             stage.show();
@@ -86,6 +86,9 @@ public class Login {
 
         CheckBox cb = new CheckBox("Remember login");
         grid.add(cb, 0, 5);
+
+        Label version = new Label("v" + Program.version);
+        grid.add(version, 0, 6);
 
         if ((new File("profile.txt")).exists()) {
             setRemembered();

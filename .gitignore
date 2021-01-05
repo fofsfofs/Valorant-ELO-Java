@@ -25,3 +25,4 @@ hs_err_pid*
 *.json
 *.txt
 target/
+/src/main/java/elo/Secret.java
