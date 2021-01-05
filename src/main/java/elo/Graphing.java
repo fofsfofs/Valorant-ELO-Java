@@ -42,15 +42,19 @@ public class Graphing {
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
 
-        double upper = 0;
-        double lower = 0;
+        double upper;
+        double lower;
         if (((Collections.max(eloHistory) / 100 + 1) * 100 - Collections.max(eloHistory)) > 50) {
             upper = (Collections.max(eloHistory) / 100 + 0.5) * 100;
         } else {
             upper = (Collections.max(eloHistory) / 100 + 1) * 100;
         }
         if (((Collections.min(eloHistory) / 100 + 1) * 100 - Collections.min(eloHistory)) > 50) {
-            lower = (Collections.min(eloHistory) / 100) * 100;
+            if (((Collections.min(eloHistory) / 100 + 1) * 100 - Collections.min(eloHistory)) == 1) {
+                lower = (Collections.min(eloHistory) / 100 - 0.5) * 100;
+            } else {
+                lower = (Collections.min(eloHistory) / 100) * 100;
+            }
         } else {
             lower = (Collections.min(eloHistory) / 100 + 0.5) * 100;
         }
