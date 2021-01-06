@@ -42,21 +42,39 @@ public class Graphing {
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
 
-        double upper;
-        double lower;
-        if (((Collections.max(eloHistory) / 100 + 1) * 100 - Collections.max(eloHistory)) > 50) {
-            upper = (Collections.max(eloHistory) / 100 + 0.5) * 100;
-        } else {
-            upper = (Collections.max(eloHistory) / 100 + 1) * 100;
+        double upper = 0;
+        double lower = 0;
+        double minDiff = 0;
+
+        int interval = Collections.min(eloHistory) - ((Collections.min(eloHistory) / 100) * 100);
+
+        if (interval >= 0 && interval <= 25) {
+            minDiff = Collections.min(eloHistory) - (Collections.min(eloHistory) / 100) * 100;
+            lower = getBound(Collections.min(eloHistory), -0.25, 0, minDiff);
+        } else if (interval > 25 && interval <= 50) {
+            minDiff = Collections.min(eloHistory) - (Collections.min(eloHistory) / 100 + 0.25) * 100;
+            lower = getBound(Collections.min(eloHistory), 0, 0.25, minDiff);
+        } else if (interval > 50 && interval <= 75) {
+            minDiff = Collections.min(eloHistory) - (Collections.min(eloHistory) / 100 + 0.5) * 100;
+            lower = getBound(Collections.min(eloHistory), 0.25, 0.5, minDiff);
+        } else if (interval > 75 && interval <= 99) {
+            minDiff = Collections.min(eloHistory) - (Collections.min(eloHistory) / 100 + 0.75) * 100;
+            lower = getBound(Collections.min(eloHistory), 0.5, 0.75, minDiff);
         }
-        if (((Collections.min(eloHistory) / 100 + 1) * 100 - Collections.min(eloHistory)) > 50) {
-            if (((Collections.min(eloHistory) / 100 + 1) * 100 - Collections.min(eloHistory)) == 1) {
-                lower = (Collections.min(eloHistory) / 100 - 0.5) * 100;
-            } else {
-                lower = (Collections.min(eloHistory) / 100) * 100;
-            }
-        } else {
-            lower = (Collections.min(eloHistory) / 100 + 0.5) * 100;
+        interval = ((Collections.max(eloHistory) / 100 + 1) * 100) - Collections.max(eloHistory);
+
+        if (interval >= 0 && interval <= 25) {
+            minDiff = (Collections.max(eloHistory) / 100 + 1) * 100 - Collections.max(eloHistory);
+            upper = getBound(Collections.max(eloHistory), 1.25, 1, minDiff);
+        } else if (interval > 25 && interval <= 50) {
+            minDiff = (Collections.max(eloHistory) / 100 + 0.75) * 100 - Collections.max(eloHistory);
+            upper = getBound(Collections.max(eloHistory), 1, 0.75, minDiff);
+        } else if (interval > 50 && interval <= 75) {
+            minDiff = (Collections.max(eloHistory) / 100 + 0.5) * 100 - Collections.max(eloHistory);
+            upper = getBound(Collections.max(eloHistory), 0.75, 0.5, minDiff);
+        } else if (interval > 75 && interval <= 99) {
+            minDiff = (Collections.max(eloHistory) / 100 + 0.25) * 100 - Collections.max(eloHistory);
+            upper = getBound(Collections.max(eloHistory), 0.5, 0.25, minDiff);
         }
 
         final NumberAxis xAxis = new NumberAxis(0, eloHistory.size() + 1, 1);
@@ -65,7 +83,6 @@ public class Graphing {
         xAxis.setLabel("Past Matches");
         yAxis.setLabel("ELO");
         sc.setTitle("ELO History");
-
 
         int iterate = 0;
         int counter = 1;
@@ -139,7 +156,6 @@ public class Graphing {
             }
         }
 
-
         for (XYChart.Series i : series) {
             sc.getData().addAll(i);
         }
@@ -193,6 +209,15 @@ public class Graphing {
         return scene;
     }
 
+    public double getBound(int elo, double offset1, double offset2, double minDiff) {
+        if (minDiff <= 15) {
+            return (elo / 100 + offset1) * 100;
+        } else {
+            return (elo / 100 + offset2) * 100;
+        }
+
+    }
+
     static class HoveredThresholdNode extends StackPane {
         HoveredThresholdNode(int x, int value, String rank, int change) {
             setPrefSize(10, 10);
@@ -218,7 +243,6 @@ public class Graphing {
             return label;
         }
     }
-
 }
 
 
