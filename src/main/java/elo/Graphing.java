@@ -1,14 +1,19 @@
 package elo;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -161,7 +166,23 @@ public class Graphing {
         }
         sc.setLegendVisible(false);
         sc.setCursor(Cursor.CROSSHAIR);
-        Scene scene = new Scene(sc, 800, 600);
+
+        Button signout = new Button("Sign out");
+        VBox vbox = new VBox();
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(0, 0, 0, 12));
+        hbox.getChildren().add(signout);
+        vbox.getChildren().add(sc);
+        vbox.getChildren().add(hbox);
+
+        signout.setOnAction( __ ->
+        {
+            stage.close();
+            Platform.runLater( () -> new Program().start( new Stage() ) );
+        } );
+
+        Scene scene = new Scene(vbox, 800, 450);
+
 
         Platform.runLater(() -> {
             for (int i = 0; i < series.size(); i++) {
@@ -205,6 +226,9 @@ public class Graphing {
                 }
             }
         });
+
+
+
 
         return scene;
     }
