@@ -37,3 +37,15 @@
 .menu-item:focused, .menu-item:focused > .label {
     -fx-background-color: #333333;
 }
+
+.match-label-red {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #FF5733;
+    -fx-border-width: 2;
+}
+
+.match-label-green {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #5CE176;
+    -fx-border-width: 2;
+}

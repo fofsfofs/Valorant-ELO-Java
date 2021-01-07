@@ -254,10 +254,13 @@ public class Graphing {
             }
             if (change >= 0) {
                 label.getStyleClass().addAll("default-color2", "chart-line-symbol", "chart-series-line");
+                label.getStyleClass().add("match-label-green");
             } else {
                 label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+                label.getStyleClass().add("match-label-red");
             }
             label.setStyle("-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: black");
+
             label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
             return label;
         }
