@@ -1,0 +1,39 @@
+.chart-vertical-grid-lines {
+    -fx-stroke: #FFFFFF;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #FFFFFF;
+}
+
+.chart {
+    -fx-tick-label-fill: #FFFFFF;
+    -fx-background: #212121;
+}
+
+.axis {
+    -fx-text-fill: #FFFFFF;
+}
+
+.axis:left {
+    -fx-border-color: transparent #FFFFFF transparent transparent;
+}
+
+.axis:bottom {
+    -fx-border-color: #FFFFFF transparent transparent;
+}
+
+.menu-bar, .menu {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+}
+
+.menu-item, /*ur mom*/
+{
+    -fx-background-color: #212121;
+    -fx-text-fill: #FFFFFF;
+}
+
+.menu-item:focused, .menu-item:focused > .label {
+    -fx-background-color: #333333;
+}
