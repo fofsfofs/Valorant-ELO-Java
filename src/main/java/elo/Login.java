@@ -115,6 +115,20 @@ public class Login {
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 4);
 
+        p1.setOnAction(__ ->
+        {
+            System.out.print("u");
+        });
+
+        p2.setOnAction(__ ->
+        {
+            System.out.print("r");
+        });
+
+        p3.setOnAction(__ ->
+        {
+            System.out.println("mom");
+        });
 
         btn.setOnAction(e -> {
             Login.setUsername(userTextField.getText());
