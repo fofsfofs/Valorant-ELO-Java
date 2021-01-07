@@ -14,20 +14,20 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class Updater {
-    DbxRequestConfig config = DbxRequestConfig.newBuilder("").build();
-    DbxClientV2 client = new DbxClientV2(config, Secret.dbToken);
+class Updater {
+    private DbxRequestConfig config = DbxRequestConfig.newBuilder("").build();
+    private DbxClientV2 client = new DbxClientV2(config, Secret.dbToken);
     private Login login;
     private String extension = "";
 
-    public Updater(Login l) {
+    Updater(Login l) {
         this.login = l;
         getExtension();
         if (!extension.equals("dev")) {
             deleteOld();
             updateNeeded();
         } else {
-            login.createLogin();
+            login.isRemembered();
         }
     }
 
@@ -79,11 +79,11 @@ public class Updater {
                         e.printStackTrace();
                     }
                 } else {
-                    login.createLogin();
+                    login.isRemembered();
                 }
             });
         } else {
-            login.createLogin();
+            login.isRemembered();
         }
     }
 
@@ -106,9 +106,7 @@ public class Updater {
             FileOutputStream fOut = new FileOutputStream(file);
             client.files().downloadBuilder("/" + extension.toUpperCase() + "s/" + getLatestVersionName()).start().download(fOut);
             fOut.close();
-        } catch (DbxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (DbxException | IOException e) {
             e.printStackTrace();
         }
     }
