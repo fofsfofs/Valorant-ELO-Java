@@ -47,5 +47,9 @@
 .match-label-green {
     -fx-background-color: #FFFFFF;
     -fx-border-color: #5CE176;
+    -fx-border-style: solid;
+    -fx-border-radius: 3;
     -fx-border-width: 2;
+
+    -fx-border-insets: 0, 0, 0, 0;
 }
