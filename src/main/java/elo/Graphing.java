@@ -1,5 +1,6 @@
 package elo;
 
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -21,10 +22,12 @@ public class Graphing {
 
     private Stage stage;
     private Rank rank;
+    private HostServices hostServices;
 
-    public Graphing(Stage s, Rank r) {
+    public Graphing(Stage s, Rank r, HostServices hs) {
         this.stage = s;
         this.rank = r;
+        this.hostServices = hs;
         createGraph();
     }
 
@@ -40,7 +43,6 @@ public class Graphing {
     public Scene getLineChart(Rank rank) {
 
         List<Integer> eloHistory = rank.getELOHistory();
-
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
 
@@ -125,11 +127,12 @@ public class Graphing {
         sc.setCursor(Cursor.CROSSHAIR);
 
         MenuItem about = new MenuItem("About");
+        MenuItem darkMode = new MenuItem("Toggle Dark Mode");
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
-        file.getItems().addAll(about, signOut, exit);
+        file.getItems().addAll(about, darkMode, signOut, exit);
         menuBar.getMenus().add(file);
         Alert a = new Alert(Alert.AlertType.INFORMATION, "default Dialog", ButtonType.OK);
         a.setTitle("About");
@@ -141,7 +144,7 @@ public class Graphing {
 
         about.setOnAction(__ ->
         {
-            a.show();
+            hostServices.showDocument("https://github.com/fofsfofs/Valorant-ELO-Java/blob/main/README.md");
         });
 
         signOut.setOnAction(__ ->

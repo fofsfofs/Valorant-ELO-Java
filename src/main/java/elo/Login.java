@@ -1,5 +1,6 @@
 package elo;
 
+import javafx.application.HostServices;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,9 +29,11 @@ public class Login {
     private static String password;
     private static String username;
     private Stage stage;
+    private HostServices hostServices;
 
-    public Login(Stage s) {
+    public Login(Stage s, HostServices hs) {
         this.stage = s;
+        this.hostServices = hs;
     }
 
     private void authenticate() {
@@ -43,7 +46,7 @@ public class Login {
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername());
             Rank rank = new Rank(m);
 
-            Graphing graph = new Graphing(stage, rank);
+            Graphing graph = new Graphing(stage, rank, hostServices);
 
         } else {
             Alert incorrect = new Alert(Alert.AlertType.WARNING);
