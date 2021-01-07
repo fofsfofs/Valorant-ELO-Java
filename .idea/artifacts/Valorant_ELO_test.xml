@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="Valorant-ELO-test">
+    <output-path>$PROJECT_DIR$/out/artifacts/Valorant_ELO_test</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="exe" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="Valorant_ELO.jar">
+        <element id="module-output" name="Valorant-ELO" />
+      </element>
+    </root>
+  </artifact>
+</component>
