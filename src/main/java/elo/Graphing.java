@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +21,6 @@ public class Graphing {
 
     private Stage stage;
     private Rank rank;
-    private List<XYChart.Series> series = new ArrayList<>();
 
     public Graphing(Stage s, Rank r) {
         this.stage = s;
@@ -124,16 +124,17 @@ public class Graphing {
         sc.setLegendVisible(false);
         sc.setCursor(Cursor.CROSSHAIR);
 
-        Alert a = new Alert(Alert.AlertType.NONE,
-                "default Dialog", ButtonType.OK);
-        a.setContentText("OkayChamp");
         MenuItem about = new MenuItem("About");
         MenuItem signOut = new MenuItem("Sign out");
+        MenuItem exit = new MenuItem("Exit");
         MenuBar menuBar = new MenuBar();
-        Menu file = new Menu("File");
-        file.getItems().add(about);
-        file.getItems().add(signOut);
+        Menu file = new Menu("Options");
+        file.getItems().addAll(about, signOut, exit);
         menuBar.getMenus().add(file);
+        Alert a = new Alert(Alert.AlertType.INFORMATION, "default Dialog", ButtonType.OK);
+        a.setTitle("About");
+        a.setContentText("https://github.com/fofsfofs/Valorant-ELO-Java");
+        a.setHeaderText(null);
         VBox vbox = new VBox();
         vbox.getChildren().add(menuBar);
         vbox.getChildren().add(sc);
@@ -146,7 +147,20 @@ public class Graphing {
         signOut.setOnAction(__ ->
         {
             stage.close();
+            String[] paths;
+            paths = new File(System.getProperty("user.dir")).list();
+            for (String path : paths) {
+                if (path.contains("profile.txt")) {
+                    File f = new File(path);
+                    f.delete();
+                }
+            }
             Platform.runLater(() -> new Program().start(new Stage()));
+        });
+
+        exit.setOnAction(__ ->
+        {
+            stage.close();
         });
 
         Scene scene = new Scene(vbox, 800, 450);
@@ -162,14 +176,13 @@ public class Graphing {
     public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g) {
         if (i != 0) {
             data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1)));
-            data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i)));
         } else {
             data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0));
         }
+        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i)));
         s.getData().add(data1);
         s.getData().add(data2);
     }
-
 
     public void setColors(List list, String color) {
         for (int i = 0; i < list.size(); i++) {
@@ -219,7 +232,11 @@ public class Graphing {
             } else {
                 label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank);
             }
-            label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+            if (change >= 0) {
+                label.getStyleClass().addAll("default-color2", "chart-line-symbol", "chart-series-line");
+            } else {
+                label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+            }
             label.setStyle("-fx-font-size: 9; -fx-font-weight: bold;");
             label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
             return label;
