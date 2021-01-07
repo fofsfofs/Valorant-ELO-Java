@@ -37,3 +37,7 @@
 .menu-item:focused, .menu-item:focused > .label {
     -fx-background-color: #333333;
 }
+
+.match-label {
+    -fx-background-color: #FFFFFF;
+}

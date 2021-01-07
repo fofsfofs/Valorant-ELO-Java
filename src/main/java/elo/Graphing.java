@@ -258,6 +258,7 @@ public class Graphing {
                 label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
             }
             label.setStyle("-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: black");
+            label.getStyleClass().add("match-label");
             label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
             return label;
         }
