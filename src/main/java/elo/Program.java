@@ -12,8 +12,6 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) {
-        Updater update = new Updater(new Login(stage));
+        Updater update = new Updater(new Login(stage, getHostServices()));
     }
-
-
 }
