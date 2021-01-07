@@ -43,17 +43,18 @@ public class Rank {
     }
 
     private Matches matches;
+
     public Rank(Matches matches) {
         this.matches = matches;
     }
 
     public int getCurrentELO() {
-        LinkedTreeMap lastMatch = (LinkedTreeMap) matches.getLatestMatchHistory().get(0);
+        LinkedTreeMap lastMatch = (LinkedTreeMap) matches.loadHistory().get(0);
         return getElO(lastMatch);
     }
 
     public int getCurrentRP() {
-        LinkedTreeMap lastMatch = (LinkedTreeMap) matches.getLatestMatchHistory().get(0);
+        LinkedTreeMap lastMatch = (LinkedTreeMap) matches.loadHistory().get(0);
         return getRP(lastMatch);
     }
 
@@ -63,9 +64,9 @@ public class Rank {
 
     public List getELOHistory() {
         List<Integer> eloHistory = new ArrayList<>();
-        ArrayList<LinkedTreeMap> lastestMatches =  matches.getLatestMatchHistory();
+        ArrayList<LinkedTreeMap> lastestMatches = matches.loadHistory();
 
-        for(LinkedTreeMap match: lastestMatches) {
+        for (LinkedTreeMap match : lastestMatches) {
             eloHistory.add(getElO(match));
         }
         Collections.reverse(eloHistory);
@@ -74,9 +75,9 @@ public class Rank {
 
     public List getGainLoss() {
         List<Integer> gainLoss = new ArrayList<>();
-        ArrayList<LinkedTreeMap> lastestMatches =  matches.getLatestMatchHistory();
+        ArrayList<LinkedTreeMap> lastestMatches = matches.loadHistory();
 
-        for(int i = 0; i < lastestMatches.size(); i++) {
+        for (int i = 0; i < lastestMatches.size(); i++) {
             if (i > 0) {
                 gainLoss.add(getElO(lastestMatches.get(i - 1)) - getElO(lastestMatches.get(i)));
             }
@@ -87,7 +88,7 @@ public class Rank {
     }
 
     public String getCurrentRank() {
-        for (Ranks r: Ranks.values()) {
+        for (Ranks r : Ranks.values()) {
             if ((getCurrentELO() / 100) == r.minELO) {
                 return r.name;
             }
@@ -96,7 +97,7 @@ public class Rank {
     }
 
     public String getRank(int elo) {
-        for (Ranks r: Ranks.values()) {
+        for (Ranks r : Ranks.values()) {
             if ((elo / 100) == r.minELO) {
                 return r.name;
             }

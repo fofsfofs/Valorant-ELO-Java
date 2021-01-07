@@ -46,9 +46,7 @@ class Login {
             String userID = Authentication.getUserID(accessToken);
 
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername());
-            Rank rank = new Rank(m);
-
-            Graphing graph = new Graphing(stage, rank, hostServices);
+            Graphing graph = new Graphing(m, stage, hostServices);
 
         } else {
             Alert incorrect = new Alert(Alert.AlertType.WARNING);

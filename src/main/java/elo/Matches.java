@@ -30,9 +30,9 @@ public class Matches {
         updateMatchHistory();
     }
 
-    public ArrayList getLatestMatchHistory() {
-        return newMatches;
-    }
+//    public ArrayList getLatestMatchHistory() {
+//        return newMatches;
+//    }
 
     private ArrayList getMatches() {
         String url = String.format("https://pd.na.a.pvp.net/mmr/v1/players/%s/competitiveupdates?startIndex=0&endIndex=20", uID);
@@ -46,13 +46,13 @@ public class Matches {
         return json.get("Matches");
     }
 
-    private ArrayList loadHistory() {
+    public ArrayList loadHistory() {
         Gson gson = new Gson();
         try {
             Reader reader = Files.newBufferedReader(Paths.get("f0fsf0fs.json"));
             ArrayList matchHistory = gson.fromJson(reader, ArrayList.class);
             reader.close();
-            return  matchHistory;
+            return matchHistory;
         } catch (IOException e1) {
             try {
                 Writer writer = new FileWriter(String.format("%s.json", user));
@@ -66,7 +66,7 @@ public class Matches {
         return null;
     }
 
-    private void updateMatchHistory() {
+    public void updateMatchHistory() {
         ArrayList allMatches = getMatches();
         ArrayList matchHistory = loadHistory();
 
@@ -76,7 +76,6 @@ public class Matches {
                 newMatches.add(allMatches.get(i));
             }
         }
-
 
         newMatches.addAll(matchHistory);
 
@@ -88,5 +87,6 @@ public class Matches {
         } catch (IOException e) {
 
         }
+        newMatches.clear();
     }
 }

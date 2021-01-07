@@ -9,6 +9,9 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,20 +23,22 @@ import java.util.List;
 
 public class Graphing {
 
+    private Matches matches;
     private Stage stage;
     private Rank rank;
     private HostServices hostServices;
     private Scene scene;
 
-    public Graphing(Stage s, Rank r, HostServices hs) {
+    public Graphing(Matches m, Stage s, HostServices hs) {
+        this.matches = m;
         this.stage = s;
-        this.rank = r;
         this.hostServices = hs;
+        updateRank();
         createGraph();
     }
 
     private void createGraph() {
-        scene = getLineChart(rank);
+        scene = getLineChart();
         scene.getRoot().setStyle("-fx-background-color: #212121");
         scene.getStylesheets().add("style.css");
         stage.setScene(scene);
@@ -43,7 +48,7 @@ public class Graphing {
         stage.show();
     }
 
-    public Scene getLineChart(Rank rank) {
+    public Scene getLineChart() {
 
         List<Integer> eloHistory = rank.getELOHistory();
         List<XYChart.Data> tempElo = new ArrayList<>();
@@ -129,14 +134,15 @@ public class Graphing {
         sc.setLegendVisible(false);
         sc.setCursor(Cursor.CROSSHAIR);
 
-
+        MenuItem refresh = new MenuItem("Refresh");
+        refresh.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
         MenuItem about = new MenuItem("About");
         MenuItem darkMode = new MenuItem("Light Mode");
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
-        file.getItems().addAll(about, darkMode, signOut, exit);
+        file.getItems().addAll(refresh, darkMode, signOut, about, exit);
         menuBar.getMenus().add(file);
         Alert a = new Alert(Alert.AlertType.INFORMATION, "default Dialog", ButtonType.OK);
         a.setTitle("About");
@@ -145,6 +151,12 @@ public class Graphing {
         VBox vbox = new VBox();
         vbox.getChildren().add(menuBar);
         vbox.getChildren().add(sc);
+
+        refresh.setOnAction(__ -> {
+            matches.updateMatchHistory();
+            updateRank();
+            createGraph();
+        });
 
         about.setOnAction(__ ->
         {
@@ -225,6 +237,10 @@ public class Graphing {
             return (elo / 100 + offset2) * 100;
         }
 
+    }
+
+    private void updateRank() {
+        rank = new Rank(matches);
     }
 
     static class HoveredThresholdNode extends StackPane {
