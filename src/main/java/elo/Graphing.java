@@ -23,6 +23,7 @@ public class Graphing {
     private Stage stage;
     private Rank rank;
     private HostServices hostServices;
+    private Scene scene;
 
     public Graphing(Stage s, Rank r, HostServices hs) {
         this.stage = s;
@@ -32,7 +33,9 @@ public class Graphing {
     }
 
     private void createGraph() {
-        Scene scene = getLineChart(rank);
+        scene = getLineChart(rank);
+        scene.getRoot().setStyle("-fx-background-color: #212121");
+        scene.getStylesheets().add("style.css");
         stage.setScene(scene);
         stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + rank.getCurrentRank() + ".png")));
         stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
@@ -126,8 +129,9 @@ public class Graphing {
         sc.setLegendVisible(false);
         sc.setCursor(Cursor.CROSSHAIR);
 
+
         MenuItem about = new MenuItem("About");
-        MenuItem darkMode = new MenuItem("Toggle Dark Mode");
+        MenuItem darkMode = new MenuItem("Light Mode");
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
         MenuBar menuBar = new MenuBar();
@@ -164,6 +168,19 @@ public class Graphing {
         exit.setOnAction(__ ->
         {
             stage.close();
+        });
+
+        darkMode.setOnAction(__ ->
+        {
+            if (darkMode.getText().equals("Light Mode")) {
+                scene.getRoot().setStyle("-fx-background-color: #FFFFFF");
+                scene.getStylesheets().remove("style.css");
+                darkMode.setText("Dark Mode");
+            } else {
+                scene.getRoot().setStyle("-fx-background-color: #212121");
+                scene.getStylesheets().add("style.css");
+                darkMode.setText("Light Mode");
+            }
         });
 
         Scene scene = new Scene(vbox, 800, 450);
@@ -240,7 +257,7 @@ public class Graphing {
             } else {
                 label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
             }
-            label.setStyle("-fx-font-size: 9; -fx-font-weight: bold;");
+            label.setStyle("-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: black");
             label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
             return label;
         }
