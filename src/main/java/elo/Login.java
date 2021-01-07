@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -62,12 +63,22 @@ public class Login {
 
     public void createLogin() {
         stage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
+        VBox root = new VBox();
+        MenuBar toolbar = new MenuBar();
+        Menu profile = new Menu("Profiles");
+        MenuItem p1 = new MenuItem("Profile 1");
+        MenuItem p2 = new MenuItem("Profile 2");
+        MenuItem p3 = new MenuItem("Profile 3");
+        toolbar.getMenus().add(profile);
+        profile.getItems().addAll(p1, p2, p3);
         GridPane grid = new GridPane();
+        root.getChildren().addAll(toolbar, grid);
 
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
+
 
         Text scenetitle = new Text("Valorant ELO Tracker");
         scenetitle.setFont(Font.font("Tacoma", FontWeight.NORMAL, 30));
@@ -132,9 +143,10 @@ public class Login {
             }
         });
 
-        Scene login = new Scene(grid, 400, 275);
+        Scene login = new Scene(root, 425, 300);
         stage.setScene(login);
         stage.setTitle("Login");
+        stage.setResizable(false);
         stage.show();
     }
 
