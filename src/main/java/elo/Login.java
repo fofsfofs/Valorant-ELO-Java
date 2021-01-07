@@ -36,7 +36,7 @@ public class Login {
     private void authenticate() {
         Cookies cookies = Authentication.getCookies();
         String accessToken = Authentication.getAccessToken(cookies, Login.getUsername(), Login.getPass());
-        if (!accessToken.equals("")) {
+        if (accessToken.contains("Bearer")) {
             String entitlementToken = Authentication.getEntitlement(accessToken);
             String userID = Authentication.getUserID(accessToken);
 
@@ -47,9 +47,13 @@ public class Login {
 
         } else {
             Alert incorrect = new Alert(Alert.AlertType.WARNING);
-            incorrect.setTitle("Incorrect login");
+            incorrect.setTitle(accessToken);
             incorrect.setHeaderText(null);
-            incorrect.setContentText("Username or password is incorrect!");
+            if (accessToken.equals("Incorrect login")) {
+                incorrect.setContentText("Username or password is incorrect!");
+            } else {
+                incorrect.setContentText("Something went wrong with Riot API");
+            }
             incorrect.showAndWait();
         }
     }

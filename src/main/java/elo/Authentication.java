@@ -3,7 +3,10 @@ package elo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import kong.unirest.*;
+import kong.unirest.Cookies;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 
 import java.util.Map;
 
@@ -19,11 +22,14 @@ public class Authentication {
                 .asJson();
         String accessTokenString = accessTokenRequest.getBody().toString();
 
-        if (!accessTokenString.equals("{\"type\":\"auth\",\"error\":\"auth_failure\",\"country\":\"can\"}")) {
-            return "Bearer " + accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
+        if (accessTokenString.equals("{\"type\":\"error\",\"error\":\"invalid_session_id\",\"country\":\"can\"}")) {
+            return "API Error";
+        } else if (accessTokenString.equals("{\"type\":\"auth\",\"error\":\"auth_failure\",\"country\":\"can\"}")) {
+            return "Incorrect login";
         } else {
-            return "";
+            return "Bearer " + accessTokenString.substring(accessTokenString.indexOf("access_token=") + 13, accessTokenString.indexOf("&scope="));
         }
+
     }
 
     static Cookies getCookies() {
@@ -62,7 +68,7 @@ public class Authentication {
         return json.get("sub");
     }
 
-    private static JsonObject getJson(String[] keys, String[] values)  {
+    private static JsonObject getJson(String[] keys, String[] values) {
 
         StringBuilder jsonStringBuilder = new StringBuilder("{");
         for (int i = 0; i < keys.length; i++) {
