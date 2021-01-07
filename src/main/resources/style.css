@@ -23,19 +23,30 @@
     -fx-border-color: #FFFFFF transparent transparent;
 }
 
-.menu-bar, .menu {
+.menu-bar, .menu .label {
     -fx-background-color: transparent;
     -fx-text-fill: #FFFFFF;
 }
 
-.menu-item, /*ur mom*/
-{
-    -fx-background-color: #212121;
-    -fx-text-fill: #FFFFFF;
+.menu-item .label {
+    -fx-text-fill: white;
 }
 
-.menu-item:focused, .menu-item:focused > .label {
-    -fx-background-color: #333333;
+.menu-item:focused {
+    -fx-background-color: darkgray;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: black;
+}
+
+.context-menu {
+    -fx-skin: "com.sun.javafx.scene.control.skin.ContextMenuSkin";
+    -fx-background-color: #212121;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+    /*    -fx-padding: 0.666667em 0.083333em 0.666667em 0.083333em;  8 1 8 1 */
+    -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em; /* 4 1 8 1 */
 }
 
 .match-label-red {
@@ -44,8 +55,6 @@
     -fx-border-width: 2;
     -fx-border-style: solid;
     -fx-border-radius: 3;
-    -fx-border-width: 2;
-
     -fx-border-insets: 0, 0, 0, 0;
 }
 
@@ -55,6 +64,5 @@
     -fx-border-style: solid;
     -fx-border-radius: 3;
     -fx-border-width: 2;
-
     -fx-border-insets: 0, 0, 0, 0;
 }
