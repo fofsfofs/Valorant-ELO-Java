@@ -38,11 +38,9 @@ public class Graphing {
     public Scene getLineChart(Rank rank) {
 
         List<Integer> eloHistory = rank.getELOHistory();
-//        List<Integer> eloHistory = new ArrayList<Integer>(Arrays.asList(620, 630, 640, 630, 610, 620, 650, 630));
         List<XYChart.Series> series = new ArrayList<>();
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
-//        List<Integer> gainLoss = new ArrayList<Integer>(Arrays.asList(10, 10, -10, -20, 10, 30, -20));
 
         double upper = 0;
         double lower = 0;
@@ -110,78 +108,6 @@ public class Graphing {
         }
         positiveList.add(positive);
         negativeList.add(negative);
-//        System.out.println(eloHistory.size());
-//        int iterate = 0;
-//        int counter = 1;
-//        while (iterate < gainLoss.size()) {
-//            while (gainLoss.get(iterate) >= 0) {
-//                tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
-//                tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
-//                if (iterate + 1 < gainLoss.size()) {
-//                    iterate++;
-//                } else {
-//                    break;
-//                }
-//            }
-//            if (!tempElo.isEmpty()) {
-//                XYChart.Series s = new XYChart.Series();
-//                for (XYChart.Data data : tempElo) {
-//                    s.getData().add(data);
-//                    if ((Integer) data.getXValue() == 1) {
-//                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
-//                    } else {
-//                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
-//                    }
-//                    counter++;
-//                }
-//                series.add(s);
-//                tempElo.clear();
-//            }
-//            while (gainLoss.get(iterate) < 0) {
-//                tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
-//                tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
-//
-//                if (iterate + 1 < gainLoss.size()) {
-//                    iterate++;
-//                } else {
-//                    break;
-//                }
-//            }
-//            if (!tempElo.isEmpty()) {
-//                XYChart.Series s = new XYChart.Series();
-//                for (XYChart.Data data : tempElo) {
-//                    s.getData().add(data);
-//                    if ((Integer) data.getXValue() == 1) {
-//                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
-//                    } else {
-//                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
-//                    }
-//                    counter++;
-//                }
-//                series.add(s);
-//                tempElo.clear();
-//            }
-//            if (iterate == gainLoss.size() - 1) {
-//                if ((gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) || gainLoss.get(iterate) >= 0 && gainLoss.get(iterate - 1) < 0) {
-//                    tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
-//                    tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
-//                    XYChart.Series s = new XYChart.Series();
-//                    XYChart.Series temp = new XYChart.Series();
-//                    for (XYChart.Data data : tempElo) {
-//                        s.getData().add(data);
-//                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
-//                    }
-//
-//                    if (gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) {
-//
-//                        series.add(temp);
-//                    }
-//                    series.add(s);
-//                    tempElo.clear();
-//                }
-//                break;
-//            }
-//        }
 
         for (Object i : positiveList) {
             sc.getData().addAll((XYChart.Series) i);
@@ -217,46 +143,6 @@ public class Graphing {
                 }
             }
 
-//            for (int i = 0; i < series.size(); i++) {
-//                ArrayList<XYChart.Data> pls = new ArrayList<>(series.get(i).getData());
-//                if (gainLoss.get(0) >= 0) {
-//                    if (i % 2 == 0) {
-//                        for (XYChart.Data data : pls) {
-//                            data.getNode().setStyle("-fx-background-color: green, white;\n"
-//                                    + "    -fx-background-insets: 0, 2;\n"
-//                                    + "    -fx-background-radius: 5px;\n"
-//                                    + "    -fx-padding: 5px;");
-//                        }
-//                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
-//                    } else {
-//                        for (XYChart.Data data : pls) {
-//                            data.getNode().setStyle("-fx-background-color: red, white;\n"
-//                                    + "    -fx-background-insets: 0, 2;\n"
-//                                    + "    -fx-background-radius: 5px;\n"
-//                                    + "    -fx-padding: 5px;");
-//                        }
-//                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
-//                    }
-//                } else {
-//                    if (i % 2 == 0) {
-//                        for (XYChart.Data data : pls) {
-//                            data.getNode().setStyle("-fx-background-color: red, white;\n"
-//                                    + "    -fx-background-insets: 0, 2;\n"
-//                                    + "    -fx-background-radius: 5px;\n"
-//                                    + "    -fx-padding: 5px;");
-//                        }
-//                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
-//                    } else {
-//                        for (XYChart.Data data : pls) {
-//                            data.getNode().setStyle("-fx-background-color: green, white;\n"
-//                                    + "    -fx-background-insets: 0, 2;\n"
-//                                    + "    -fx-background-radius: 5px;\n"
-//                                    + "    -fx-padding: 5px;");
-//                        }
-//                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
-//                    }
-//                }
-//            }
         });
 
         return scene;
