@@ -1,17 +1,13 @@
 package elo;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -24,6 +20,7 @@ public class Graphing {
 
     private Stage stage;
     private Rank rank;
+    private List<XYChart.Series> series = new ArrayList<>();
 
     public Graphing(Stage s, Rank r) {
         this.stage = s;
@@ -43,7 +40,7 @@ public class Graphing {
     public Scene getLineChart(Rank rank) {
 
         List<Integer> eloHistory = rank.getELOHistory();
-        List<XYChart.Series> series = new ArrayList<>();
+
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
 
@@ -89,148 +86,103 @@ public class Graphing {
         yAxis.setLabel("ELO");
         sc.setTitle("ELO History");
 
-        int iterate = 0;
-        int counter = 1;
-        while (iterate < gainLoss.size()) {
-            while (gainLoss.get(iterate) >= 0) {
-                tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
-                tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
-                if (iterate + 1 < gainLoss.size()) {
-                    iterate++;
-                } else {
-                    break;
-                }
-            }
-            if (!tempElo.isEmpty()) {
-                XYChart.Series s = new XYChart.Series();
-                for (XYChart.Data data : tempElo) {
-                    s.getData().add(data);
-                    if ((Integer) data.getXValue() == 1) {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
-                    } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
-                    }
-                    counter++;
-                }
-                series.add(s);
-                tempElo.clear();
-            }
-            while (gainLoss.get(iterate) < 0) {
-                tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
-                tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
+        List positiveList = new ArrayList();
+        List negativeList = new ArrayList();
+        XYChart.Series positive = new XYChart.Series();
+        XYChart.Series negative = new XYChart.Series();
 
-                if (iterate + 1 < gainLoss.size()) {
-                    iterate++;
-                } else {
-                    break;
+        for (int i = 0; i < gainLoss.size(); i++) {
+            if (gainLoss.get(i) >= 0) {
+                if (i != 0 && gainLoss.get(i - 1) < 0) {
+                    negativeList.add(negative);
+                    negative = new XYChart.Series();
                 }
-            }
-            if (!tempElo.isEmpty()) {
-                XYChart.Series s = new XYChart.Series();
-                for (XYChart.Data data : tempElo) {
-                    s.getData().add(data);
-                    if ((Integer) data.getXValue() == 1) {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), 0));
-                    } else {
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
-                    }
-                    counter++;
-                }
-                series.add(s);
-                tempElo.clear();
-            }
-            if (iterate == gainLoss.size() - 1) {
-                if ((gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) || gainLoss.get(iterate) >= 0 && gainLoss.get(iterate - 1) < 0) {
-                    tempElo.add(new XYChart.Data(iterate + 1, eloHistory.get(iterate)));
-                    tempElo.add(new XYChart.Data(iterate + 2, eloHistory.get(iterate + 1)));
-                    XYChart.Series s = new XYChart.Series();
-                    XYChart.Series temp = new XYChart.Series();
-                    for (XYChart.Data data : tempElo) {
-                        s.getData().add(data);
-                        data.setNode(new HoveredThresholdNode((Integer) data.getXValue(), (Integer) data.getYValue(), rank.getRank((Integer) data.getYValue()), gainLoss.get((Integer) data.getXValue() - 2)));
-                    }
+                XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
+                XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
+                addHover(i, data, data2, positive, gainLoss);
 
-                    if (gainLoss.get(iterate) < 0 && gainLoss.get(iterate - 1) >= 0) {
-
-                        series.add(temp);
-                    }
-                    series.add(s);
-                    tempElo.clear();
+            } else if (gainLoss.get(i) < 0) {
+                if (i != 0 && gainLoss.get(i - 1) >= 0) {
+                    positiveList.add(positive);
+                    positive = new XYChart.Series();
                 }
-                break;
+                XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
+                XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
+                addHover(i, data, data2, negative, gainLoss);
             }
         }
+        positiveList.add(positive);
+        negativeList.add(negative);
 
-        for (XYChart.Series i : series) {
-            sc.getData().addAll(i);
+        for (Object i : positiveList) {
+            sc.getData().addAll((XYChart.Series) i);
         }
+        for (Object i : negativeList) {
+            sc.getData().addAll((XYChart.Series) i);
+        }
+
         sc.setLegendVisible(false);
         sc.setCursor(Cursor.CROSSHAIR);
 
-        Button signout = new Button("Sign out");
+        Alert a = new Alert(Alert.AlertType.NONE,
+                "default Dialog", ButtonType.OK);
+        a.setContentText("OkayChamp");
+        MenuItem about = new MenuItem("About");
+        MenuItem signOut = new MenuItem("Sign out");
+        MenuBar menuBar = new MenuBar();
+        Menu file = new Menu("File");
+        file.getItems().add(about);
+        file.getItems().add(signOut);
+        menuBar.getMenus().add(file);
         VBox vbox = new VBox();
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(0, 0, 0, 12));
-        hbox.getChildren().add(signout);
+        vbox.getChildren().add(menuBar);
         vbox.getChildren().add(sc);
-        vbox.getChildren().add(hbox);
 
-        signout.setOnAction( __ ->
+        about.setOnAction(__ ->
+        {
+            a.show();
+        });
+
+        signOut.setOnAction(__ ->
         {
             stage.close();
-            Platform.runLater( () -> new Program().start( new Stage() ) );
-        } );
+            Platform.runLater(() -> new Program().start(new Stage()));
+        });
 
         Scene scene = new Scene(vbox, 800, 450);
 
-
         Platform.runLater(() -> {
-            for (int i = 0; i < series.size(); i++) {
-                ArrayList<XYChart.Data> pls = new ArrayList<>(series.get(i).getData());
-                if (gainLoss.get(0) >= 0) {
-                    if (i % 2 == 0) {
-                        for (XYChart.Data data : pls) {
-                            data.getNode().setStyle("-fx-background-color: green, white;\n"
-                                    + "    -fx-background-insets: 0, 2;\n"
-                                    + "    -fx-background-radius: 5px;\n"
-                                    + "    -fx-padding: 5px;");
-                        }
-                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
-                    } else {
-                        for (XYChart.Data data : pls) {
-                            data.getNode().setStyle("-fx-background-color: red, white;\n"
-                                    + "    -fx-background-insets: 0, 2;\n"
-                                    + "    -fx-background-radius: 5px;\n"
-                                    + "    -fx-padding: 5px;");
-                        }
-                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
-                    }
-                } else {
-                    if (i % 2 == 0) {
-                        for (XYChart.Data data : pls) {
-                            data.getNode().setStyle("-fx-background-color: red, white;\n"
-                                    + "    -fx-background-insets: 0, 2;\n"
-                                    + "    -fx-background-radius: 5px;\n"
-                                    + "    -fx-padding: 5px;");
-                        }
-                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: red;");
-                    } else {
-                        for (XYChart.Data data : pls) {
-                            data.getNode().setStyle("-fx-background-color: green, white;\n"
-                                    + "    -fx-background-insets: 0, 2;\n"
-                                    + "    -fx-background-radius: 5px;\n"
-                                    + "    -fx-padding: 5px;");
-                        }
-                        series.get(i).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: green;");
-                    }
-                }
-            }
+            setColors(positiveList, "green");
+            setColors(negativeList, "red");
         });
 
-
-
-
         return scene;
+    }
+
+    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g) {
+        if (i != 0) {
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1)));
+            data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i)));
+        } else {
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0));
+        }
+        s.getData().add(data1);
+        s.getData().add(data2);
+    }
+
+
+    public void setColors(List list, String color) {
+        for (int i = 0; i < list.size(); i++) {
+            ArrayList<XYChart.Data> data = new ArrayList<>(((XYChart.Series) list.get(i)).getData());
+            for (XYChart.Data datum : data) {
+                datum.getNode().setStyle("-fx-background-color: " + color + ", white;\n"
+                        + "    -fx-background-insets: 0, 2;\n"
+                        + "    -fx-background-radius: 5px;\n"
+                        + "    -fx-padding: 5px;");
+                XYChart.Series series1 = (XYChart.Series) list.get(i);
+                series1.getNode().lookup(".chart-series-line").setStyle("-fx-stroke: " + color + ";");
+            }
+        }
     }
 
     public double getBound(int elo, double offset1, double offset2, double minDiff) {
@@ -260,13 +212,17 @@ public class Graphing {
         }
 
         private Label createDataThresholdLabel(int x, int value, String rank, int change) {
-            final Label label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank + "\nChange: " + change);
-            label.getStyleClass().addAll("default-color8", "chart-line-symbol", "chart-series-line");
+            Label label;
+            if (x != 1) {
+                label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank + "\nChange: " + change);
+
+            } else {
+                label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank);
+            }
+            label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
             label.setStyle("-fx-font-size: 9; -fx-font-weight: bold;");
             label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
             return label;
         }
     }
 }
-
-
