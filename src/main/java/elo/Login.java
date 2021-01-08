@@ -1,14 +1,12 @@
 package elo;
 
 import javafx.application.HostServices;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -28,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Scanner;
 
-public class Login {
+class Login {
 
     private static String password;
     private static String username;
@@ -36,7 +34,7 @@ public class Login {
     private HostServices hostServices;
     private String region = "na";
 
-    public Login(Stage s, HostServices hs) {
+    Login(Stage s, HostServices hs) {
         this.stage = s;
         this.hostServices = hs;
     }
@@ -49,9 +47,7 @@ public class Login {
             String userID = Authentication.getUserID(accessToken);
 
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername(), region);
-            Rank rank = new Rank(m);
-
-            Graphing graph = new Graphing(stage, rank, hostServices);
+            Graphing graph = new Graphing(m, stage, hostServices);
 
         } else {
             Alert incorrect = new Alert(Alert.AlertType.WARNING);
@@ -62,7 +58,7 @@ public class Login {
         }
     }
 
-    public void createLogin() {
+    private void createLogin() {
         stage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
         VBox root = new VBox();
         MenuBar toolbar = new MenuBar();
@@ -112,7 +108,7 @@ public class Login {
         grid.add(version, 0, 6);
 
         if ((new File("profile.txt")).exists()) {
-            setRemembered();
+            getRemembered();
             userTextField.setText(username);
             pwBox.setText(password);
             cb.setSelected(true);
@@ -125,19 +121,13 @@ public class Login {
         grid.add(hbBtn, 1, 4);
 
         p1.setOnAction(__ ->
-        {
-            System.out.print("u");
-        });
+                System.out.print("u"));
 
         p2.setOnAction(__ ->
-        {
-            System.out.print("r");
-        });
+                System.out.print("r"));
 
         p3.setOnAction(__ ->
-        {
-            System.out.println("mom");
-        });
+                System.out.println("mom"));
 
         r1.setOnAction(__ ->
         {
@@ -170,18 +160,15 @@ public class Login {
             }
         });
 
-        pwBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent ke) {
-                if (ke.getCode().equals(KeyCode.ENTER)) {
-                    Login.setUsername(userTextField.getText());
-                    Login.setPass(pwBox.getText());
-                    if (cb.isSelected() && !(new File("profile.txt")).exists()) {
-                        rememberLogin();
-                        authenticate();
-                    } else {
-                        authenticate();
-                    }
+        pwBox.setOnKeyPressed(ke -> {
+            if (ke.getCode().equals(KeyCode.ENTER)) {
+                Login.setUsername(userTextField.getText());
+                Login.setPass(pwBox.getText());
+                if (cb.isSelected() && !(new File("profile.txt")).exists()) {
+                    rememberLogin();
+                    authenticate();
+                } else {
+                    authenticate();
                 }
             }
         });
@@ -197,11 +184,20 @@ public class Login {
         return password;
     }
 
-    public static String getUsername() {
+    static String getUsername() {
         return username;
     }
 
-    private static void setRemembered() {
+    void isRemembered() {
+        if (new File("profile.txt").exists()) {
+            getRemembered();
+            authenticate();
+        } else {
+            createLogin();
+        }
+    }
+
+    private static void getRemembered() {
         String[] data = new String[2];
         try {
             File file = new File("profile.txt");
@@ -211,7 +207,7 @@ public class Login {
             }
             scanner.close();
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
 
         Login.setUsername(data[0]);
@@ -228,7 +224,7 @@ public class Login {
             Path path = Paths.get("profile.txt");
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 
