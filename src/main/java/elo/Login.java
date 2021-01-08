@@ -34,6 +34,7 @@ public class Login {
     private static String username;
     private Stage stage;
     private HostServices hostServices;
+    private String region = "na";
 
     public Login(Stage s, HostServices hs) {
         this.stage = s;
@@ -47,7 +48,7 @@ public class Login {
             String entitlementToken = Authentication.getEntitlement(accessToken);
             String userID = Authentication.getUserID(accessToken);
 
-            Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername());
+            Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername(), region);
             Rank rank = new Rank(m);
 
             Graphing graph = new Graphing(stage, rank, hostServices);
@@ -66,11 +67,20 @@ public class Login {
         VBox root = new VBox();
         MenuBar toolbar = new MenuBar();
         Menu profile = new Menu("Profiles");
+        Menu reg = new Menu("Region");
         MenuItem p1 = new MenuItem("Profile 1");
         MenuItem p2 = new MenuItem("Profile 2");
         MenuItem p3 = new MenuItem("Profile 3");
-        toolbar.getMenus().add(profile);
+        RadioMenuItem r1 = new RadioMenuItem("North America");
+        RadioMenuItem r2 = new RadioMenuItem("Europe");
+        RadioMenuItem r3 = new RadioMenuItem("Korea");
+        RadioMenuItem r4 = new RadioMenuItem("Other");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        r1.setSelected(true);
+        toolbar.getMenus().addAll(profile, reg);
         profile.getItems().addAll(p1, p2, p3);
+        reg.getItems().addAll(r1, r2, r3, r4);
+        toggleGroup.getToggles().addAll(r1, r2, r3, r4);
         GridPane grid = new GridPane();
         root.getChildren().addAll(toolbar, grid);
 
@@ -78,7 +88,6 @@ public class Login {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-
 
         Text scenetitle = new Text("Valorant ELO Tracker");
         scenetitle.setFont(Font.font("Tacoma", FontWeight.NORMAL, 30));
@@ -128,6 +137,26 @@ public class Login {
         p3.setOnAction(__ ->
         {
             System.out.println("mom");
+        });
+
+        r1.setOnAction(__ ->
+        {
+            region = "na";
+        });
+
+        r2.setOnAction(__ ->
+        {
+            region = "eu";
+        });
+
+        r3.setOnAction(__ ->
+        {
+            region = "kr";
+        });
+
+        r4.setOnAction(__ ->
+        {
+            region = "ap";
         });
 
         btn.setOnAction(e -> {

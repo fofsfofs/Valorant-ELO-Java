@@ -21,12 +21,14 @@ public class Matches {
     private ArrayList newMatches = new ArrayList();
     private String uID;
     private String user;
+    private String region = "na";
 
-    public Matches(String accessToken, String entitlementToken, String userID, String username) {
+    public Matches(String accessToken, String entitlementToken, String userID, String username, String region) {
         this.at = accessToken;
         this.et = entitlementToken;
         this.uID = userID;
         this.user = username;
+        this.region = region;
         updateMatchHistory();
     }
 
@@ -35,7 +37,7 @@ public class Matches {
     }
 
     private ArrayList getMatches() {
-        String url = String.format("https://pd.na.a.pvp.net/mmr/v1/players/%s/competitiveupdates?startIndex=0&endIndex=20", uID);
+        String url = String.format("https://pd.%s.a.pvp.net/mmr/v1/players/%s/competitiveupdates?startIndex=0&endIndex=20", region, uID);
         HttpResponse matchResponse = Unirest.get(url)
                 .header("Authorization", at)
                 .header("X-Riot-Entitlements-JWT", et)
@@ -52,7 +54,7 @@ public class Matches {
             Reader reader = Files.newBufferedReader(Paths.get("f0fsf0fs.json"));
             ArrayList matchHistory = gson.fromJson(reader, ArrayList.class);
             reader.close();
-            return  matchHistory;
+            return matchHistory;
         } catch (IOException e1) {
             try {
                 Writer writer = new FileWriter(String.format("%s.json", user));
