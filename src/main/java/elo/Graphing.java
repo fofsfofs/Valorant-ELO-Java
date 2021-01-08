@@ -53,6 +53,7 @@ public class Graphing {
         List<Integer> eloHistory = rank.getELOHistory();
         List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
+        List<String> compMovement = rank.getCompMovement();
 
         double upper = 0;
         double lower = 0;
@@ -109,7 +110,7 @@ public class Graphing {
                 }
                 XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
                 XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
-                addHover(i, data, data2, positive, gainLoss);
+                addHover(i, data, data2, positive, gainLoss, compMovement);
 
             } else if (gainLoss.get(i) < 0) {
                 if (i != 0 && gainLoss.get(i - 1) >= 0) {
@@ -118,7 +119,7 @@ public class Graphing {
                 }
                 XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
                 XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
-                addHover(i, data, data2, negative, gainLoss);
+                addHover(i, data, data2, negative, gainLoss, compMovement);
             }
         }
         positiveList.add(positive);
@@ -205,13 +206,13 @@ public class Graphing {
         return scene;
     }
 
-    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g) {
+    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g, List<String> movement) {
         if (i != 0) {
-            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1)));
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1), movement.get(i)));
         } else {
-            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0));
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0, ""));
         }
-        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i)));
+        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i), movement.get(i + 1)));
         s.getData().add(data1);
         s.getData().add(data2);
     }
@@ -244,10 +245,10 @@ public class Graphing {
     }
 
     static class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(int x, int value, String rank, int change) {
+        HoveredThresholdNode(int x, int value, String rank, int change, String movement) {
             setPrefSize(10, 10);
 
-            final Label label = createDataThresholdLabel(x, value, rank, change);
+            final Label label = createDataThresholdLabel(x, value, rank, change, movement);
 
             setOnMouseEntered(mouseEvent -> {
                 getChildren().setAll(label);
@@ -260,11 +261,10 @@ public class Graphing {
             });
         }
 
-        private Label createDataThresholdLabel(int x, int value, String rank, int change) {
+        private Label createDataThresholdLabel(int x, int value, String rank, int change, String movement) {
             Label label;
             if (x != 1) {
-                label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank + "\nChange: " + change);
-
+                label = new Label(String.format("Match: %d\nELO: %d\n%s\n%s\nChange: %d", x, value, rank, movement, change));
             } else {
                 label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank);
             }

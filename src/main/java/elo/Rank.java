@@ -48,6 +48,22 @@ public class Rank {
         this.matches = matches;
     }
 
+    public List getCompMovement() {
+        ArrayList<LinkedTreeMap> lastestMatches = matches.loadHistory();
+        List<String> compMovement = new ArrayList<>();
+        for (LinkedTreeMap match : lastestMatches) {
+            String movement = ((String) match.get("CompetitiveMovement")).substring(0, 1) + ((String) match.get("CompetitiveMovement")).substring(1).toLowerCase();
+            if (movement.contains("_")) {
+                String[] twoWords = movement.split("_");
+                compMovement.add(twoWords[0] + " " + twoWords[1]);
+            } else {
+                compMovement.add(movement);
+            }
+        }
+        Collections.reverse(compMovement);
+        return compMovement;
+    }
+
     public int getCurrentELO() {
         LinkedTreeMap lastMatch = (LinkedTreeMap) matches.loadHistory().get(0);
         return getElO(lastMatch);
