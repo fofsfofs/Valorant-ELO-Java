@@ -10,12 +10,14 @@ This program lets you visualize your (unofficial) ELO as you play competitive ga
 
 Your username and password are used to make a call to the Riot API exlusively. We do not do anything with your account information. The code is open-source, if you want to compile the program into a jar yourself, you can. You do not have to save your account info, however, if you do then the program will save your username onto a textfile and the password will be encrypted in Base64.
 
+The program also has auto updating capabilities, if your version is out of date it will prompt you to download the newest version. Dropbox is used to host the updates.
+
 ## External Packages
-[Unirest](https://kong.github.io/unirest-java/)
+[Unirest (API calls)](https://kong.github.io/unirest-java/)
 
-[GSON](https://github.com/google/gson)
+[GSON (JSON parsing)](https://github.com/google/gson)
 
-[Dropbox](https://github.com/dropbox/dropbox-sdk-java)
+[Dropbox (Updates)](https://github.com/dropbox/dropbox-sdk-java)
 
 ## Demo
 Here's a video on how to use the program
