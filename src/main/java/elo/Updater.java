@@ -35,7 +35,7 @@ class Updater {
         String[] paths;
         paths = new File(System.getProperty("user.dir")).list();
         for (String path : paths) {
-            if (path.contains(extension) && !path.contains(Program.version + "." + extension)) {
+            if (path.contains(extension) && path.contains("Valorant-ELO-") && !path.contains(Program.version + "." + extension)) {
                 File file = new File(path);
                 file.delete();
             }

@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Valorant-ELO:jar1.2">
-    <output-path>$PROJECT_DIR$/out/artifacts/Valorant_ELO_jar1_2</output-path>
+  <artifact type="jar" name="Valorant-ELO:jar1.21">
+    <output-path>$PROJECT_DIR$/out/artifacts/Valorant_ELO_jar1_21</output-path>
     <root id="archive" name="Valorant-ELO.jar">
       <element id="module-output" name="Valorant-ELO" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/dropbox/core/dropbox-core-sdk/3.1.5/dropbox-core-sdk-3.1.5.jar" path-in-jar="/" />
