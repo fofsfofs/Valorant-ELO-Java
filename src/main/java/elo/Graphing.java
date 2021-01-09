@@ -19,7 +19,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,13 +36,17 @@ public class Graphing {
         this.stage = s;
         this.hostServices = hs;
         updateRank();
-        createGraph();
+        createGraph("Dark Mode");
     }
 
-    private void createGraph() {
-        scene = getLineChart();
-        scene.getRoot().setStyle("-fx-background-color: #212121");
-        scene.getStylesheets().add("style.css");
+    private void createGraph(String mode) {
+        if (mode.equals("Dark Mode")) {
+            scene = getLineChart("Dark Mode");
+            scene.getRoot().setStyle("-fx-background-color: #212121");
+            scene.getStylesheets().add("style.css");
+        } else {
+            scene = getLineChart("Light mode");
+        }
         stage.setScene(scene);
         stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + rank.getCurrentRank() + ".png")));
         stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
@@ -51,10 +54,9 @@ public class Graphing {
         stage.show();
     }
 
-    public Scene getLineChart() {
+    public Scene getLineChart(String mode) {
 
         List<Integer> eloHistory = rank.getELOHistory();
-        List<XYChart.Data> tempElo = new ArrayList<>();
         List<Integer> gainLoss = rank.getGainLoss();
         List<String> compMovement = rank.getCompMovement();
 
@@ -73,10 +75,11 @@ public class Graphing {
         } else if (interval > 50 && interval <= 75) {
             minDiff = Collections.min(eloHistory) - (Collections.min(eloHistory) / 100 + 0.5) * 100;
             lower = getBound(Collections.min(eloHistory), 0.25, 0.5, minDiff);
-        } else if (interval > 75 && interval <= 99) {
+        } else if (interval > 75 && interval <= 100) {
             minDiff = Collections.min(eloHistory) - (Collections.min(eloHistory) / 100 + 0.75) * 100;
             lower = getBound(Collections.min(eloHistory), 0.5, 0.75, minDiff);
         }
+
         interval = ((Collections.max(eloHistory) / 100 + 1) * 100) - Collections.max(eloHistory);
 
         if (interval >= 0 && interval <= 25) {
@@ -88,7 +91,7 @@ public class Graphing {
         } else if (interval > 50 && interval <= 75) {
             minDiff = (Collections.max(eloHistory) / 100 + 0.5) * 100 - Collections.max(eloHistory);
             upper = getBound(Collections.max(eloHistory), 0.75, 0.5, minDiff);
-        } else if (interval > 75 && interval <= 99) {
+        } else if (interval > 75 && interval <= 100) {
             minDiff = (Collections.max(eloHistory) / 100 + 0.25) * 100 - Collections.max(eloHistory);
             upper = getBound(Collections.max(eloHistory), 0.5, 0.25, minDiff);
         }
@@ -141,13 +144,20 @@ public class Graphing {
         MenuItem refresh = new MenuItem("Refresh");
         refresh.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
         MenuItem about = new MenuItem("About");
-        MenuItem darkMode = new MenuItem("Light Mode");
+        MenuItem modeMenu = new MenuItem();
+        if (mode.equals("Dark Mode")) {
+            modeMenu.setText("Light Mode");
+        } else {
+            modeMenu.setText("Dark Mode");
+        }
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
-        file.getItems().addAll(refresh, darkMode, signOut, about, exit);
+        file.getItems().addAll(refresh, modeMenu, signOut, about, exit);
+
         menuBar.getMenus().add(file);
+        menuBar.getMenus().add(Login.getProfileMenu());
         VBox vbox = new VBox();
         vbox.getChildren().add(menuBar);
         vbox.getChildren().add(sc);
@@ -155,7 +165,11 @@ public class Graphing {
         refresh.setOnAction(__ -> {
             matches.updateMatchHistory();
             updateRank();
-            createGraph();
+            if (modeMenu.getText().equals("Light Mode")) {
+                createGraph("Dark Mode");
+            } else {
+                createGraph("Light Mode");
+            }
         });
 
         about.setOnAction(__ ->
@@ -166,14 +180,7 @@ public class Graphing {
         signOut.setOnAction(__ ->
         {
             stage.close();
-            String[] paths;
-            paths = new File(System.getProperty("user.dir")).list();
-            for (String path : paths) {
-                if (path.contains("profile.txt")) {
-                    File f = new File(path);
-                    f.delete();
-                }
-            }
+            Login.signOut(Login.getUsername());
             Platform.runLater(() -> new Program().start(new Stage()));
         });
 
@@ -182,16 +189,16 @@ public class Graphing {
             stage.close();
         });
 
-        darkMode.setOnAction(__ ->
+        modeMenu.setOnAction(__ ->
         {
-            if (darkMode.getText().equals("Light Mode")) {
+            if (modeMenu.getText().equals("Light Mode")) {
                 scene.getRoot().setStyle("-fx-background-color: #FFFFFF");
                 scene.getStylesheets().remove("style.css");
-                darkMode.setText("Dark Mode");
+                modeMenu.setText("Dark Mode");
             } else {
                 scene.getRoot().setStyle("-fx-background-color: #212121");
                 scene.getStylesheets().add("style.css");
-                darkMode.setText("Light Mode");
+                modeMenu.setText("Light Mode");
             }
         });
 
@@ -236,7 +243,6 @@ public class Graphing {
         } else {
             return (elo / 100 + offset2) * 100;
         }
-
     }
 
     private void updateRank() {

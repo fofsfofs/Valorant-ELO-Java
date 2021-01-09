@@ -3,6 +3,7 @@ package elo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import javafx.scene.control.Alert;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -36,22 +37,39 @@ public class Matches {
 //        return newMatches;
 //    }
 
-    private ArrayList getMatches() {
-        String url = String.format("https://pd.%s.a.pvp.net/mmr/v1/players/%s/competitiveupdates?startIndex=0&endIndex=20", region, uID);
+    private ArrayList getMatches(int index) {
+        String url = String.format("https://pd.%s.a.pvp.net/mmr/v1/players/%s/competitiveupdates?startIndex=%d&endIndex=%d", region, uID, index, index + 20);
         HttpResponse matchResponse = Unirest.get(url)
                 .header("Authorization", at)
                 .header("X-Riot-Entitlements-JWT", et)
                 .asJson();
 
         Gson gson = new Gson();
-        Map<String, ArrayList> json = gson.fromJson(matchResponse.getBody().toString(), Map.class);
-        return json.get("Matches");
+        Map<String, ArrayList> json = new LinkedTreeMap<>();
+//        System.out.println(matchResponse.getBody() == null);
+        if (matchResponse.getBody() == null) {
+            if (index == 0) {
+                Alert refresh = new Alert(Alert.AlertType.WARNING);
+                refresh.setTitle("Stop refreshing");
+                refresh.setHeaderText(null);
+                refresh.setContentText("You have either refreshed or run the program too many times\nPlease wait 10-20 seconds");
+                refresh.showAndWait();
+            }
+        } else {
+            json = gson.fromJson(matchResponse.getBody().toString(), Map.class);
+        }
+
+        if (json.get("Matches") == null) {
+            return new ArrayList();
+        } else {
+            return json.get("Matches");
+        }
     }
 
     public ArrayList loadHistory() {
         Gson gson = new Gson();
         try {
-            Reader reader = Files.newBufferedReader(Paths.get("f0fsf0fs.json"));
+            Reader reader = Files.newBufferedReader(Paths.get(user + ".json"));
             ArrayList matchHistory = gson.fromJson(reader, ArrayList.class);
             reader.close();
             return matchHistory;
@@ -69,13 +87,14 @@ public class Matches {
     }
 
     public void updateMatchHistory() {
-        ArrayList allMatches = getMatches();
         ArrayList matchHistory = loadHistory();
-
-        for (int i = 0; i < allMatches.size(); i++) {
-            LinkedTreeMap match = (LinkedTreeMap) allMatches.get(i);
-            if (!match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchHistory.contains(match)) {
-                newMatches.add(allMatches.get(i));
+        for (int i = 0; i < 6; i++) {
+            ArrayList allMatches = getMatches(i * 20);
+            for (int j = 0; j < allMatches.size(); j++) {
+                LinkedTreeMap match = (LinkedTreeMap) allMatches.get(j);
+                if (!match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchHistory.contains(match)) {
+                    newMatches.add(allMatches.get(j));
+                }
             }
         }
 

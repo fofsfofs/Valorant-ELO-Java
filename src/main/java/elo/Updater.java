@@ -27,7 +27,7 @@ class Updater {
             deleteOld();
             updateNeeded();
         } else {
-            login.isRemembered();
+            login.createLogin();
         }
     }
 
@@ -79,11 +79,11 @@ class Updater {
                         e.printStackTrace();
                     }
                 } else {
-                    login.isRemembered();
+                    login.createLogin();
                 }
             });
         } else {
-            login.isRemembered();
+            login.createLogin();
         }
     }
 
