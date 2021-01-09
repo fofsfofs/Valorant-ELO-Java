@@ -46,6 +46,8 @@ class Login {
             String userID = Authentication.getUserID(accessToken);
 
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername(), region);
+            stage.getIcons().remove(0);
+            stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + new Rank(m).getCurrentRank() + ".png")));
             if (m.loadHistory().isEmpty()) {
                 Alert noMatches = new Alert(Alert.AlertType.WARNING);
                 noMatches.setTitle("No matches found");
