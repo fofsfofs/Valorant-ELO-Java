@@ -268,6 +268,8 @@ class Login {
                 writer.write(newContent);
 
                 writer.close();
+                Path path = Paths.get("profile.txt");
+                Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -356,6 +358,8 @@ class Login {
             writer.write(newContent);
 
             writer.close();
+            Path path = Paths.get("profile.txt");
+            Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
         } catch (IOException e) {
             e.printStackTrace();
         }
