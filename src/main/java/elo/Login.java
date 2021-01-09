@@ -46,8 +46,7 @@ class Login {
             String userID = Authentication.getUserID(accessToken);
 
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername(), region);
-            stage.getIcons().remove(0);
-            stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + new Rank(m).getCurrentRank() + ".png")));
+
             if (m.loadHistory().isEmpty()) {
                 Alert noMatches = new Alert(Alert.AlertType.WARNING);
                 noMatches.setTitle("No matches found");
@@ -55,6 +54,8 @@ class Login {
                 noMatches.setContentText("A competitive match was not found in your last 100 matches");
                 noMatches.showAndWait();
             } else {
+                stage.getIcons().remove(0);
+                stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + new Rank(m).getCurrentRank() + ".png")));
                 Graphing graph = new Graphing(m, stage, hostServices);
             }
 
