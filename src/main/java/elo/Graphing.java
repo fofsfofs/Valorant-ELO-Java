@@ -150,12 +150,16 @@ public class Graphing {
         }
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
+        MenuItem addProfile = new MenuItem("Add Profile");
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
-        file.getItems().addAll(refresh, modeMenu, signOut, about, exit);
+        file.getItems().addAll(refresh, modeMenu, addProfile, signOut, about, exit);
 
         menuBar.getMenus().add(file);
         menuBar.getMenus().add(Login.getProfileMenu());
+        if (!Login.getProfileMenu().getItems().get(2).getText().equals("Profile 3")) {
+            addProfile.setDisable(true);
+        }
         VBox vbox = new VBox();
         vbox.getChildren().add(menuBar);
         vbox.getChildren().add(sc);
@@ -173,6 +177,11 @@ public class Graphing {
         about.setOnAction(__ ->
         {
             hostServices.showDocument("https://github.com/fofsfofs/Valorant-ELO-Java/blob/main/README.md");
+        });
+
+        addProfile.setOnAction(__ -> {
+            stage.close();
+            Platform.runLater(() -> new Program().start(new Stage()));
         });
 
         signOut.setOnAction(__ ->
