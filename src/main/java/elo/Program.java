@@ -13,5 +13,7 @@ public class Program extends Application {
     @Override
     public void start(Stage stage) {
         Updater update = new Updater(new Login(stage, getHostServices()));
+//        If you would like to run/compile the program yourself comment out the code above and uncomment the code below
+//        new Login(stage, getHostServices()).createLogin();
     }
 }
