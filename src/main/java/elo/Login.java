@@ -60,6 +60,9 @@ class Login {
             }
 
         } else {
+            if (new File("profile.txt").exists()) {
+                signOut(Login.getUsername());
+            }
             Alert incorrect = new Alert(Alert.AlertType.WARNING);
             incorrect.setTitle("Incorrect login");
             incorrect.setHeaderText(null);

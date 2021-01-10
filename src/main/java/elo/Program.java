@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Program extends Application {
-    final static String version = "1.22";
+    final static String version = "1.23";
 
     public static void main(String[] args) {
         launch(args);

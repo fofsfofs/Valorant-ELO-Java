@@ -107,6 +107,8 @@ public class Rank {
         for (Ranks r : Ranks.values()) {
             if ((getCurrentELO() / 100) == r.minELO) {
                 return r.name;
+            } else if ((getCurrentELO() / 100) >= 21) {
+                return "Radiant";
             }
         }
         return "";
@@ -116,6 +118,8 @@ public class Rank {
         for (Ranks r : Ranks.values()) {
             if ((elo / 100) == r.minELO) {
                 return r.name;
+            } else if ((elo / 100) >= 21) {
+                return "Radiant";
             }
         }
         return "";
