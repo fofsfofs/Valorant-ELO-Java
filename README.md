@@ -25,7 +25,7 @@ Here's a video on how to use the program
 
 If Windows Defender is on, Windows will prevent you from opening the program due to the exe not being signed. To get past this, simply click more info and then run. This message shouldn't pop up again. Once again, you can check all the source code and compile it yourself. The code is completely clean.
 
-<img src="https://i.imgur.com/tKt72qu.png" width="40w0">
+<img src="https://i.imgur.com/tKt72qu.png" width="400">
 
 ## Contact
 <p>
