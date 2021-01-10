@@ -1,5 +1,10 @@
 # Valorant-ELO-Java
 
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/297191765172158464/797699353414074378/unknown.png" width="700">
+</p>
+
+
 ## This program is not affiliated with Riot Games in any way
 If this needs to be taken down for whatever reason, please contact us. 
 
@@ -22,7 +27,10 @@ Overall the program is very simple and straight forward. You should be able to e
 
 Here's a gif on how to use the program
 
-![](demo.gif)
+<p align="center">
+  <img src="/demo.gif">
+</p>
+
 
 If Windows Defender is on, Windows will prevent you from opening the program due to the exe not being signed. To get past this, simply click more info and then run. This message shouldn't pop up again. Once again, you can check all the source code and compile it yourself. The code is completely clean.
 
