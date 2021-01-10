@@ -14,9 +14,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import org.gillius.jfxutils.chart.ChartPanManager;
+import org.gillius.jfxutils.chart.JFXChartUtil;
+import org.gillius.jfxutils.chart.StableTicksAxis;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,11 +99,30 @@ public class Graphing {
             upper = getBound(Collections.max(eloHistory), 0.5, 0.25, minDiff);
         }
 
-        final NumberAxis xAxis = new NumberAxis(0, eloHistory.size() + 1, 1);
-        final NumberAxis yAxis = new NumberAxis(lower, upper, 100);
-        final LineChart<Number, Number> sc = new LineChart<>(xAxis, yAxis);
-        xAxis.setLabel("Past Matches");
-        yAxis.setLabel("ELO");
+        NumberAxis xAxis = new NumberAxis(0, eloHistory.size() + 1, 1);
+        NumberAxis yAxis = new NumberAxis(lower, upper, 100);
+
+        StableTicksAxis xStable = new StableTicksAxis(0, eloHistory.size() + 1);
+        StableTicksAxis yStable = new StableTicksAxis();
+
+        LineChart<Number, Number> sc = new LineChart<>(xAxis, yAxis);
+        StringConverter stringConverter = new StringConverter<Number>() {
+            @Override
+            public String toString(Number object) {
+                return object.intValue() + "";
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return Integer.parseInt(string);
+            }
+        };
+
+        xAxis.setTickLabelFormatter(stringConverter);
+        yAxis.setTickLabelFormatter(stringConverter);
+
+        xStable.setLabel("Past Matches");
+        yStable.setLabel("ELO");
         sc.setTitle("ELO History");
 
         List positiveList = new ArrayList();
@@ -137,7 +161,7 @@ public class Graphing {
         }
 
         sc.setLegendVisible(false);
-        sc.setCursor(Cursor.CROSSHAIR);
+        sc.setCursor(Cursor.HAND);
 
         MenuItem refresh = new MenuItem("Refresh");
         refresh.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
@@ -151,9 +175,11 @@ public class Graphing {
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
         MenuItem addProfile = new MenuItem("Add Profile");
+        MenuItem resetView = new MenuItem("Reset View");
+        resetView.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN));
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
-        file.getItems().addAll(refresh, modeMenu, addProfile, signOut, about, exit);
+        file.getItems().addAll(refresh, resetView, modeMenu, addProfile, signOut, about, exit);
 
         menuBar.getMenus().add(file);
         menuBar.getMenus().add(Login.getProfileMenu());
@@ -163,6 +189,14 @@ public class Graphing {
         VBox vbox = new VBox();
         vbox.getChildren().add(menuBar);
         vbox.getChildren().add(sc);
+
+        resetView.setOnAction(__ -> {
+            if (modeMenu.getText().equals("Light Mode")) {
+                createGraph("Dark Mode");
+            } else {
+                createGraph("Light Mode");
+            }
+        });
 
         refresh.setOnAction(__ -> {
             matches.updateMatchHistory();
@@ -214,6 +248,23 @@ public class Graphing {
         Platform.runLater(() -> {
             setColors(positiveList, "green");
             setColors(negativeList, "red");
+        });
+
+        ChartPanManager panner = new ChartPanManager(sc);
+        //while presssing the left mouse button, you can drag to navigate
+        panner.setMouseFilter(mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {//set your custom combination to trigger navigation
+                // let it through
+            } else {
+                mouseEvent.consume();
+            }
+        });
+        panner.start();
+
+        //holding the right mouse button will draw a rectangle to zoom to desired location
+        JFXChartUtil.setupZooming(sc, mouseEvent -> {
+            if (mouseEvent.getButton() != MouseButton.SECONDARY)//set your custom combination to trigger rectangle zooming
+                mouseEvent.consume();
         });
 
         return scene;
