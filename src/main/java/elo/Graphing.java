@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.gillius.jfxutils.chart.ChartPanManager;
 import org.gillius.jfxutils.chart.JFXChartUtil;
-import org.gillius.jfxutils.chart.StableTicksAxis;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,11 +98,11 @@ public class Graphing {
             upper = getBound(Collections.max(eloHistory), 0.5, 0.25, minDiff);
         }
 
-        NumberAxis xAxis = new NumberAxis(0, eloHistory.size() + 1, 1);
+        int xTicks = eloHistory.size() >= 10 ? eloHistory.size() / 10 : 1;
+
+        NumberAxis xAxis = new NumberAxis(0, eloHistory.size() + 1, xTicks);
         NumberAxis yAxis = new NumberAxis(lower, upper, 100);
 
-        StableTicksAxis xStable = new StableTicksAxis(0, eloHistory.size() + 1);
-        StableTicksAxis yStable = new StableTicksAxis();
 
         LineChart<Number, Number> sc = new LineChart<>(xAxis, yAxis);
         StringConverter stringConverter = new StringConverter<Number>() {
@@ -121,8 +120,8 @@ public class Graphing {
         xAxis.setTickLabelFormatter(stringConverter);
         yAxis.setTickLabelFormatter(stringConverter);
 
-        xStable.setLabel("Past Matches");
-        yStable.setLabel("ELO");
+        xAxis.setLabel("Past Matches");
+        yAxis.setLabel("ELO");
         sc.setTitle("ELO History");
 
         List positiveList = new ArrayList();
