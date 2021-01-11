@@ -59,7 +59,7 @@ class Updater {
 
     private void updateNeeded() {
         if (Double.parseDouble(Program.version) < getLatestVersionNum()) {
-            Alert needUpdate = new Alert(Alert.AlertType.INFORMATION, "A new version is available, would you like to download?");
+            Alert needUpdate = new Alert(Alert.AlertType.INFORMATION, "A new version is available, would you like to download?\n1.24 allows for zooming and panning!");
             needUpdate.setTitle("Old version detected");
             needUpdate.setHeaderText(null);
             ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
