@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Program extends Application {
-    final static String version = "1.25";
+    final static String version = "2.0";
     static final Logger logger = LogManager.getLogger(Program.class);
 
     public static void main(String[] args) {
