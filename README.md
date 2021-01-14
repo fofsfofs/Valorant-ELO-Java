@@ -1,7 +1,7 @@
 # Valorant-ELO-Java
 
 <p align="center">
-  <img src="https://i.imgur.com/py3kydq.png" width="700">
+  <img src="https://i.imgur.com/ifOXjnn.png" width="700">
 </p>
 
 
