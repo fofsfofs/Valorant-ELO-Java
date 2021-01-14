@@ -11,10 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -124,6 +121,8 @@ public class Graphing {
         yAxis.setLabel("ELO");
         sc.setTitle("ELO History");
 
+        double area = Math.abs((xAxis.getUpperBound() - xAxis.getLowerBound()) * (yAxis.getUpperBound() - yAxis.getLowerBound()));
+
         List positiveList = new ArrayList();
         List negativeList = new ArrayList();
         XYChart.Series positive = new XYChart.Series();
@@ -178,10 +177,10 @@ public class Graphing {
         resetView.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN));
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
-        file.getItems().addAll(refresh, resetView, modeMenu, addProfile, signOut, about, exit);
-
-        menuBar.getMenus().add(file);
-        menuBar.getMenus().add(Login.getProfileMenu());
+        Menu zoom = new Menu("Zoom: 100.00%");
+        file.getItems().addAll(refresh, modeMenu, addProfile, signOut, about, exit);
+        zoom.getItems().add(resetView);
+        menuBar.getMenus().addAll(file, Login.getProfileMenu(), zoom);
         if (!Login.getProfileMenu().getItems().get(2).getText().equals("Profile 3")) {
             addProfile.setDisable(true);
         }
@@ -195,6 +194,7 @@ public class Graphing {
             } else {
                 createGraph("Light Mode");
             }
+            zoom.setText("Zoom: 100.00%");
         });
 
         refresh.setOnAction(__ -> {
@@ -264,6 +264,11 @@ public class Graphing {
         JFXChartUtil.setupZooming(sc, mouseEvent -> {
             if (mouseEvent.getButton() != MouseButton.SECONDARY)//set your custom combination to trigger rectangle zooming
                 mouseEvent.consume();
+        });
+
+        sc.setOnScroll((ScrollEvent event) -> {
+            String zoomString = String.format("Zoom: %.2f", 100 * (area / Math.abs((xAxis.getUpperBound() - xAxis.getLowerBound()) * (yAxis.getUpperBound() - yAxis.getLowerBound()))));
+            zoom.setText(zoomString + "%");
         });
 
         return scene;
