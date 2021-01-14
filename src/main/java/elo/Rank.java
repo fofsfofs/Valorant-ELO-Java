@@ -9,28 +9,26 @@ import java.util.List;
 public class Rank {
 
     enum Ranks {
-        IRON1(0, "Iron 1"),
-        IRON2(1, "Iron 2"),
-        IRON3(2, "Iron 3"),
-        BROONZE1(3, "Bronze 1"),
-        BRONZE2(4, "Bronze 2"),
-        BRONZE3(5, "Bronze 3"),
-        SILVER1(6, "Silver 1"),
-        SILVER2(7, "Silver 2"),
-        SILVER3(8, "Silver 3"),
-        GOLD1(9, "Gold 1"),
-        GOLD2(10, "Gold 2"),
-        GOLD3(11, "Gold 3"),
-        PLATINUM1(12, "Platinum 1"),
-        PLATINUM2(13, "Platinum 2"),
-        PLATINUM3(14, "Platinum 3"),
-        DIAMOND1(15, "Diamond 1"),
-        DIAMOND2(16, "Diamond 2"),
-        DIAMOND3(17, "Diamond 3"),
-        IMMORTAL1(18, "Immortal 1"),
-        IMMORTAL2(19, "Immortal 2"),
-        IMMORTAL3(20, "Immortal 3"),
-        RADIANT(21, "Radiant");
+        IRON1(3, "Iron 1"),
+        IRON2(4, "Iron 2"),
+        IRON3(5, "Iron 3"),
+        BRONZE1(6, "Bronze 1"),
+        BRONZE2(7, "Bronze 2"),
+        BRONZE3(8, "Bronze 3"),
+        SILVER1(9, "Silver 1"),
+        SILVER2(10, "Silver 2"),
+        SILVER3(11, "Silver 3"),
+        GOLD1(12, "Gold 1"),
+        GOLD2(13, "Gold 2"),
+        GOLD3(14, "Gold 3"),
+        PLATINUM1(15, "Platinum 1"),
+        PLATINUM2(16, "Platinum 2"),
+        PLATINUM3(17, "Platinum 3"),
+        DIAMOND1(18, "Diamond 1"),
+        DIAMOND2(19, "Diamond 2"),
+        DIAMOND3(20, "Diamond 3"),
+        IMMORTAL(21, "Immortal"),
+        RADIANT(24, "Radiant");
 
 
         private int minELO;
@@ -42,26 +40,44 @@ public class Rank {
         }
     }
 
+    enum Maps {
+        Ascent("Ascent", "Ascent"),
+        Bind("Duality", "Bind"),
+        Icebox("Port", "Icebox"),
+        Haven("Triad", "Haven"),
+        Split("Bonsai", "Split");
+
+        private String cn;
+        private String rn;
+
+        Maps(String codeName, String realName) {
+            this.cn = codeName;
+            this.rn = realName;
+        }
+
+    }
+
     private Matches matches;
 
     public Rank(Matches matches) {
         this.matches = matches;
     }
 
-    public List getCompMovement() {
-        ArrayList<LinkedTreeMap> lastestMatches = matches.loadHistory();
-        List<String> compMovement = new ArrayList<>();
-        for (LinkedTreeMap match : lastestMatches) {
-            String movement = ((String) match.get("CompetitiveMovement")).substring(0, 1) + ((String) match.get("CompetitiveMovement")).substring(1).toLowerCase();
-            if (movement.contains("_")) {
-                String[] twoWords = movement.split("_");
-                compMovement.add(twoWords[0] + " " + twoWords[1]);
-            } else {
-                compMovement.add(movement);
+    public List getMaps() {
+        ArrayList<LinkedTreeMap> latestMatches = matches.loadHistory();
+        List<String> maps = new ArrayList<>();
+        for (LinkedTreeMap match : latestMatches) {
+            String mapID = (String) match.get("MapID");
+            String mapStr = mapID.substring(mapID.lastIndexOf("/") + 1);
+
+            for (Maps m : Maps.values()) {
+                if (m.cn.equals(mapStr)) {
+                    maps.add(m.rn);
+                }
             }
         }
-        Collections.reverse(compMovement);
-        return compMovement;
+        Collections.reverse(maps);
+        return maps;
     }
 
     public int getCurrentELO() {
@@ -69,20 +85,20 @@ public class Rank {
         return getElO(lastMatch);
     }
 
-    public int getCurrentRP() {
+    public int getCurrentRR() {
         LinkedTreeMap lastMatch = (LinkedTreeMap) matches.loadHistory().get(0);
-        return getRP(lastMatch);
+        return getRR(lastMatch);
     }
 
     private int getElO(LinkedTreeMap match) {
-        return ((Double) match.get("TierAfterUpdate")).intValue() * 100 - 300 + getRP(match);
+        return ((Double) match.get("TierAfterUpdate")).intValue() * 100 + getRR(match);
     }
 
     public List getELOHistory() {
         List<Integer> eloHistory = new ArrayList<>();
-        ArrayList<LinkedTreeMap> lastestMatches = matches.loadHistory();
+        ArrayList<LinkedTreeMap> latestMatches = matches.loadHistory();
 
-        for (LinkedTreeMap match : lastestMatches) {
+        for (LinkedTreeMap match : latestMatches) {
             eloHistory.add(getElO(match));
         }
         Collections.reverse(eloHistory);
@@ -91,11 +107,11 @@ public class Rank {
 
     public List getGainLoss() {
         List<Integer> gainLoss = new ArrayList<>();
-        ArrayList<LinkedTreeMap> lastestMatches = matches.loadHistory();
+        ArrayList<LinkedTreeMap> latestMatches = matches.loadHistory();
 
-        for (int i = 0; i < lastestMatches.size(); i++) {
+        for (int i = 0; i < latestMatches.size(); i++) {
             if (i > 0) {
-                gainLoss.add(getElO(lastestMatches.get(i - 1)) - getElO(lastestMatches.get(i)));
+                gainLoss.add(getElO(latestMatches.get(i - 1)) - getElO(latestMatches.get(i)));
             }
 
         }
@@ -104,28 +120,23 @@ public class Rank {
     }
 
     public String getCurrentRank() {
-        for (Ranks r : Ranks.values()) {
-            if ((getCurrentELO() / 100) == r.minELO) {
-                return r.name;
-            } else if ((getCurrentELO() / 100) >= 21) {
-                return "Radiant";
-            }
-        }
-        return "";
+        return getRank(getCurrentELO());
     }
 
     public String getRank(int elo) {
         for (Ranks r : Ranks.values()) {
             if ((elo / 100) == r.minELO) {
                 return r.name;
-            } else if ((elo / 100) >= 21) {
+            } else if ((elo / 100) >= 21 && (elo / 100) < 24) {
+                return "Immortal";
+            } else if ((elo / 100) >= 24) {
                 return "Radiant";
             }
         }
         return "";
     }
 
-    private int getRP(LinkedTreeMap match) {
-        return ((Double) match.get("TierProgressAfterUpdate")).intValue();
+    private int getRR(LinkedTreeMap match) {
+        return ((Double) match.get("RankedRatingAfterUpdate")).intValue();
     }
 }

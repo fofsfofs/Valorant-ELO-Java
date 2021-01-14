@@ -2,9 +2,12 @@ package elo;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Program extends Application {
-    final static String version = "1.24";
+    final static String version = "1.25";
+    static final Logger logger = LogManager.getLogger(Program.class);
 
     public static void main(String[] args) {
         launch(args);

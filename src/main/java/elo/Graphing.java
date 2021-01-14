@@ -51,7 +51,7 @@ public class Graphing {
             scene = getLineChart("Light mode");
         }
         stage.setScene(scene);
-        stage.setTitle(String.format("%s | %s | RP: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRP()));
+        stage.setTitle(String.format("%s | %s | RR: %d", Login.getUsername(), rank.getCurrentRank(), rank.getCurrentRR()));
         stage.setResizable(false);
         stage.show();
     }
@@ -60,7 +60,7 @@ public class Graphing {
 
         List<Integer> eloHistory = rank.getELOHistory();
         List<Integer> gainLoss = rank.getGainLoss();
-        List<String> compMovement = rank.getCompMovement();
+        List<String> maps = rank.getMaps();
 
         double upper = 0;
         double lower = 0;
@@ -137,7 +137,7 @@ public class Graphing {
                 }
                 XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
                 XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
-                addHover(i, data, data2, positive, gainLoss, compMovement);
+                addHover(i, data, data2, positive, gainLoss, maps);
 
             } else if (gainLoss.get(i) < 0) {
                 if (i != 0 && gainLoss.get(i - 1) >= 0) {
@@ -146,7 +146,7 @@ public class Graphing {
                 }
                 XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
                 XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
-                addHover(i, data, data2, negative, gainLoss, compMovement);
+                addHover(i, data, data2, negative, gainLoss, maps);
             }
         }
         positiveList.add(positive);
@@ -269,13 +269,13 @@ public class Graphing {
         return scene;
     }
 
-    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g, List<String> movement) {
+    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g, List<String> maps) {
         if (i != 0) {
-            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1), movement.get(i)));
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1), maps.get(i)));
         } else {
-            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0, ""));
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0, maps.get(i)));
         }
-        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i), movement.get(i + 1)));
+        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i), maps.get(i + 1)));
         s.getData().add(data1);
         s.getData().add(data2);
     }
@@ -307,10 +307,10 @@ public class Graphing {
     }
 
     static class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(int x, int value, String rank, int change, String movement) {
+        HoveredThresholdNode(int x, int value, String rank, int change, String map) {
             setPrefSize(10, 10);
 
-            final Label label = createDataThresholdLabel(x, value, rank, change, movement);
+            final Label label = createDataThresholdLabel(x, value, rank, change, map);
 
             setOnMouseEntered(mouseEvent -> {
                 getChildren().setAll(label);
@@ -323,12 +323,12 @@ public class Graphing {
             });
         }
 
-        private Label createDataThresholdLabel(int x, int value, String rank, int change, String movement) {
+        private Label createDataThresholdLabel(int x, int value, String rank, int change, String map) {
             Label label;
             if (x != 1) {
-                label = new Label(String.format("Match: %d\nELO: %d\n%s\n%s\nChange: %d", x, value, rank, movement, change));
+                label = new Label(String.format("Match: %d\nELO: %d\n%s\nGain/Loss: %d\n%s", x, value, rank, change, map));
             } else {
-                label = new Label("Match: " + x + "\nELO: " + value + "\n" + rank);
+                label = new Label(String.format("Match: %d\nELO: %d\n%s\n%s", x, value, rank, map));
             }
             if (change >= 0) {
                 label.getStyleClass().addAll("default-color2", "chart-line-symbol");

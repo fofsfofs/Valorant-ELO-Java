@@ -14,12 +14,13 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Matches {
     private String at;
     private String et;
-    private ArrayList newMatches = new ArrayList();
+    private List newMatches = new ArrayList();
     private String uID;
     private String user;
     private String region = "na";
@@ -33,9 +34,6 @@ public class Matches {
         updateMatchHistory();
     }
 
-//    public ArrayList getLatestMatchHistory() {
-//        return newMatches;
-//    }
 
     private ArrayList getMatches(int index) {
         String url = String.format("https://pd.%s.a.pvp.net/mmr/v1/players/%s/competitiveupdates?startIndex=%d&endIndex=%d", region, uID, index, index + 20);
@@ -46,7 +44,6 @@ public class Matches {
 
         Gson gson = new Gson();
         Map<String, ArrayList> json = new LinkedTreeMap<>();
-//        System.out.println(matchResponse.getBody() == null);
         if (matchResponse.getBody() == null) {
             if (index == 0) {
                 Alert refresh = new Alert(Alert.AlertType.WARNING);
@@ -88,13 +85,15 @@ public class Matches {
 
     public void updateMatchHistory() {
         ArrayList matchHistory = loadHistory();
+
         for (int i = 0; i < 6; i++) {
-            ArrayList allMatches = getMatches(i * 20);
+            ArrayList<LinkedTreeMap> allMatches = getMatches(i * 20);
             for (int j = 0; j < allMatches.size(); j++) {
-                LinkedTreeMap match = (LinkedTreeMap) allMatches.get(j);
-                if (!match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchHistory.contains(match)) {
-                    newMatches.add(allMatches.get(j));
+                LinkedTreeMap match = allMatches.get(j);
+                if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchHistory.contains(match)) {
+                    newMatches.add(match);
                 }
+
             }
         }
 

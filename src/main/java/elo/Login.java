@@ -51,7 +51,7 @@ class Login {
                 Alert noMatches = new Alert(Alert.AlertType.WARNING);
                 noMatches.setTitle("No matches found");
                 noMatches.setHeaderText(null);
-                noMatches.setContentText("A competitive match was not found in your last 100 matches");
+                noMatches.setContentText("A competitive match was not found in your last 100 matches.\nYou must also play at least one game after your placements.");
                 noMatches.showAndWait();
             } else {
                 stage.getIcons().remove(0);
@@ -308,7 +308,14 @@ class Login {
     private void setProfileAction(MenuItem profile, int profNumber) {
         profile.setOnAction(__ -> {
             setUsernameAndPass(getRemembered(profNumber));
-            authenticate();
+            try {
+                authenticate();
+            } catch (Exception e) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                Program.logger.error(sw);
+            }
         });
     }
 
@@ -329,7 +336,15 @@ class Login {
             rememberLogin(1);
             updateProfileMenu(profile.getItems().get(0), 1);
         }
-        authenticate();
+
+        try {
+            authenticate();
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            Program.logger.error(sw);
+        }
     }
 
     public static void signOut(String user) {
