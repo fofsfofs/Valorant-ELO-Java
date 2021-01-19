@@ -59,7 +59,7 @@ class Updater {
 
     private void updateNeeded() {
         if (Double.parseDouble(Program.version) < getLatestVersionNum()) {
-            Alert needUpdate = new Alert(Alert.AlertType.INFORMATION, "A new version is available, would you like to download?\nDELETE the JSON files before updating to 1.25!");
+            Alert needUpdate = new Alert(Alert.AlertType.INFORMATION, "A new version is available, would you like to download?");
             needUpdate.setTitle("Old version detected");
             needUpdate.setHeaderText(null);
             ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
