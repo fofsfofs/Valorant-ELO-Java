@@ -22,6 +22,8 @@ Your username and password are used to make a call to the Riot API exclusively. 
 
 [Dropbox](https://github.com/dropbox/dropbox-sdk-java)
 
+[Log4j 2](https://logging.apache.org/log4j/2.x/)
+
 ## Installation/Demo
 Overall the program is very simple and straight forward. You should be able to extract the zip and just run the program. If for some reason you cannot run the program, you probably need to have Java installed first which you can find [here](https://www.java.com/en/download/).
 
