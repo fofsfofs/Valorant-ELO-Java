@@ -40,10 +40,12 @@ public class Matches {
         HttpResponse matchResponse = Unirest.get(url)
                 .header("Authorization", at)
                 .header("X-Riot-Entitlements-JWT", et)
+                .header("X-Riot-ClientPlatform", "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9")
                 .asJson();
 
         Gson gson = new Gson();
         Map<String, ArrayList> json = new LinkedTreeMap<>();
+
         if (matchResponse.getBody() == null) {
             if (index == 0) {
                 Alert refresh = new Alert(Alert.AlertType.WARNING);
@@ -86,12 +88,13 @@ public class Matches {
     public void updateMatchHistory() {
         ArrayList matchHistory = loadHistory();
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 1; i++) {
             ArrayList<LinkedTreeMap> allMatches = getMatches(i * 20);
             for (int j = 0; j < allMatches.size(); j++) {
                 LinkedTreeMap match = allMatches.get(j);
                 if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchHistory.contains(match)) {
-                    newMatches.add(match);
+                    MatchInfo mInfo = new MatchInfo((String) allMatches.get(j).get("MatchID"), at, et, uID, region);
+                    newMatches.add(mInfo.addInfo(allMatches.get(j)));
                 }
 
             }
