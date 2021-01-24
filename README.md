@@ -44,6 +44,6 @@ If Windows Defender is on, Windows will prevent you from opening the program due
 ## Contact
 <p>
   <a href="https://twitter.com/FarFar0204"><img src="https://img.shields.io/badge/Twitter-@FarFar0204-1da1f2.svg?logo=twitter?style=for-the-badge&logo=appveyor"></a>
-  <a><img src ="https://img.shields.io/badge/Discord-fofsfofs%238306-blueviolet?logo=discord"></a>
+  <a><img src ="https://img.shields.io/badge/Discord-fofsfofs%230204-blueviolet?logo=discord"></a>
     <a><img src ="https://img.shields.io/badge/Discord-Torkoal64%233969-blueviolet?logo=discord"></a>
 </p>
