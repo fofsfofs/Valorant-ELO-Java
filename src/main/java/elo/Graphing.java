@@ -22,6 +22,8 @@ import javafx.util.StringConverter;
 import org.gillius.jfxutils.chart.ChartPanManager;
 import org.gillius.jfxutils.chart.JFXChartUtil;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -335,7 +337,14 @@ public class Graphing {
 
             setOnMouseEntered(mouseEvent -> {
                 root.getChildren().clear();
-                DisplayMatch dm = new DisplayMatch(matchID, root);
+                try {
+                    DisplayMatch dm = new DisplayMatch(matchID, root);
+                } catch (Exception e) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    Program.logger.error(sw);
+                }
                 getChildren().setAll(label);
                 setCursor(Cursor.NONE);
                 toFront();

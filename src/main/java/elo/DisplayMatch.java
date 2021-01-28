@@ -12,9 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
@@ -141,7 +139,7 @@ public class DisplayMatch {
     private void setMatch() {
         Gson gson = new Gson();
         try {
-            Reader reader = Files.newBufferedReader(Paths.get(Login.getUsername() + ".json"));
+            Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Paths.get(Login.getUsername() + ".json").toString()), "utf-8"));
             ArrayList<LinkedTreeMap> matchHistory = gson.fromJson(reader, ArrayList.class);
             reader.close();
             for (LinkedTreeMap m : matchHistory) {

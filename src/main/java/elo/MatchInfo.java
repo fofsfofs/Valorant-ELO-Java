@@ -9,10 +9,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.StringReader;
-import java.io.Writer;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -98,13 +95,13 @@ public class MatchInfo {
 
             JsonReader reader = new JsonReader(new StringReader(matchResponseString));
             json = gson.fromJson(reader, Map.class);
-            try {
-                Writer writer = new FileWriter(String.format("%s.json", "test"));
-                gson.toJson(json, writer);
-                writer.close();
-            } catch (IOException e) {
-
-            }
+//            try {
+//                Writer writer = new FileWriter(String.format("%s.json", "test"));
+//                gson.toJson(json, writer);
+//                writer.close();
+//            } catch (IOException e) {
+//
+//            }
         } catch (NullPointerException n) {
             System.out.println("Something went wrong");
         }
