@@ -9,7 +9,7 @@
 If this needs to be taken down for whatever reason, please contact us. 
 
 ## About
-First we want to give a huge shoutout to [RumbleMike and his ValorantStreamOverlay project](https://github.com/RumbleMike/ValorantStreamOverlay), none of this would have possible without his work. Make sure to check it out if you haven't already. 
+First we want to give a huge shoutout to [RumbleMike and his ValorantStreamOverlay project](https://github.com/RumbleMike/ValorantStreamOverlay), none of this would have possible without his work. Another huge shoutout to [Liam's endpoints](https://github.com/liamcottle/valorant.js), his work helped with retreiving match data. Make sure to check them out if you haven't already. 
 
 This program lets you visualize your ELO as you play competitive games. It keeps a history of your played games even after they are overwritten by your newer games. It supports up to 3 accounts so you can easily switch them. You may be wondering why use this program if Riot already implmented the Ranked Rating numbers into the game. This program caches all your games, meaning that even after the matches leave your career page they'll remain on the graph for you to see. It's also nice (or depressing) to visually see your ELO increase/decrease on a basic line graph.
 
