@@ -208,16 +208,16 @@ public class MatchInfo {
     }
 
     private void sortScores(ArrayList<Map> list) {
-        ArrayList<String> nums = new ArrayList<>();
+        ArrayList<Integer> nums = new ArrayList<>();
         for (Map player : list) {
-            nums.add((String) player.get("Score"));
+            nums.add(Integer.valueOf((String) player.get("Score")));
         }
         Collections.sort(nums);
         Collections.reverse(nums);
         for (int i = 0; i < list.size(); i++) {
-            if (nums.get(i) != list.get(i).get("Score")) {
+            if (String.valueOf(nums.get(i)) != list.get(i).get("Score")) {
                 for (Map player : list) {
-                    if (nums.get(i).equals((String) player.get("Score"))) {
+                    if (String.valueOf(nums.get(i)).equals(player.get("Score"))) {
                         Collections.swap(list, i, list.indexOf(player));
                     }
                 }
