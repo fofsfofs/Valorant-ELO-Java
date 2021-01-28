@@ -89,7 +89,6 @@ public class DisplayMatch {
             comradeScore = initializeMiddleText("  " + score.substring(0, score.indexOf("-")), Color.rgb(95, 204, 116));
         }
 
-
         textFlowPane.getChildren().addAll(comradeScore, dash, enemyScore);
         middleBox.setPadding(new Insets(125, 0, 0, 0));
         middleBox.getChildren().addAll(textFlowPane, dateText, lengthText);
@@ -97,8 +96,8 @@ public class DisplayMatch {
     }
 
     private VBox nameKDA(String team) {
-        VBox comradeNames = new VBox();
-        Text[] comradeTextNames = new Text[5];
+        VBox vBox = new VBox();
+        Text[] textNames = new Text[5];
         HBox[] hBoxes = new HBox[5];
 
         for (int i = 0; i < ((ArrayList<Map>) match.get(team)).size(); i++) {
@@ -106,25 +105,25 @@ public class DisplayMatch {
             String kda = (String) (((ArrayList<Map>) match.get(team)).get(i)).get("KDA");
 
 
-            comradeTextNames[i] = new Text();
-            comradeTextNames[i].setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC.TTF"), 35));
-            comradeTextNames[i].setFill(Color.WHITE);
+            textNames[i] = new Text();
+            textNames[i].setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC.TTF"), 35));
+            textNames[i].setFill(Color.WHITE);
             if (team.equals("Comrades")) {
-                comradeTextNames[i].setText(name + "  " + kda);
-                comradeNames.setPadding(new Insets(37, 0, 0, 5));
-                comradeNames.getChildren().add(comradeTextNames[i]);
+                textNames[i].setText(name + "  " + kda);
+                vBox.setPadding(new Insets(37, 0, 0, 5));
+                vBox.getChildren().add(textNames[i]);
             } else if (team.equals("Enemies")) {
                 hBoxes[i] = new HBox();
-                comradeTextNames[i].setText(kda + "  " + name);
-                hBoxes[i].getChildren().add(comradeTextNames[i]);
+                textNames[i].setText(kda + "  " + name);
+                hBoxes[i].getChildren().add(textNames[i]);
                 hBoxes[i].setAlignment(Pos.BASELINE_RIGHT);
-                comradeNames.setPadding(new Insets(37, 5, 0, 0));
-                comradeNames.getChildren().add(hBoxes[i]);
+                vBox.setPadding(new Insets(37, 5, 0, 0));
+                vBox.getChildren().add(hBoxes[i]);
             }
         }
 
-        comradeNames.setSpacing(27);
-        return comradeNames;
+        vBox.setSpacing(27);
+        return vBox;
     }
 
     private void setMap() {
