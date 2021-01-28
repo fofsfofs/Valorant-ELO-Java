@@ -1,7 +1,7 @@
 # Valorant-ELO-Java
 
 <p align="center">
-  <img src="https://i.imgur.com/ifOXjnn.png" width="700">
+  <img src="https://i.imgur.com/YWBlUYN.png" width="700">
 </p>
 
 
@@ -14,6 +14,8 @@ First we want to give a huge shoutout to [RumbleMike and his ValorantStreamOverl
 This program lets you visualize your ELO as you play competitive games. It keeps a history of your played games even after they are overwritten by your newer games. It supports up to 3 accounts so you can easily switch them. You may be wondering why use this program if Riot already implmented the Ranked Rating numbers into the game. This program caches all your games, meaning that even after the matches leave your career page they'll remain on the graph for you to see. It's also nice (or depressing) to visually see your ELO increase/decrease on a basic line graph.
 
 Your username and password are used to make a call to the Riot API exclusively. We do not do anything with your account information. The code is open-source, if you want to compile the program into a jar yourself, you can. You do not have to save your account info, however, if you do then the program will save your username onto a textfile and the password will be encrypted in Base64.
+
+The program has an auto updater built in so when updates are pushed to Dropbox your program should automatically delete the old version and replace it with a the latest one.
 
 ## External Packages
 [Unirest](https://kong.github.io/unirest-java/)
