@@ -20,6 +20,7 @@ import java.util.Map;
 public class Matches {
     private String at;
     private String et;
+    private List<String> matchIDs = new ArrayList<>();
     private List newMatches = new ArrayList();
     private String uID;
     private String user;
@@ -65,11 +66,18 @@ public class Matches {
         }
     }
 
+    private void getMatchIDs(List<LinkedTreeMap> matches) {
+        for (LinkedTreeMap match : matches) {
+            matchIDs.add((String) match.get("MatchID"));
+        }
+    }
+
     public ArrayList loadHistory() {
         Gson gson = new Gson();
         try {
             Reader reader = Files.newBufferedReader(Paths.get(user + ".json"));
             ArrayList matchHistory = gson.fromJson(reader, ArrayList.class);
+            getMatchIDs(matchHistory);
             reader.close();
             return matchHistory;
         } catch (IOException e1) {
@@ -88,11 +96,13 @@ public class Matches {
     public void updateMatchHistory() {
         ArrayList matchHistory = loadHistory();
 
+
         for (int i = 0; i < 1; i++) {
             ArrayList<LinkedTreeMap> allMatches = getMatches(i * 20);
             for (int j = 0; j < allMatches.size(); j++) {
                 LinkedTreeMap match = allMatches.get(j);
-                if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchHistory.contains(match)) {
+                String id = (String) match.get("MatchID");
+                if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchIDs.contains(id)) {
                     MatchInfo mInfo = new MatchInfo((String) allMatches.get(j).get("MatchID"), at, et, uID, region);
                     newMatches.add(mInfo.addInfo(allMatches.get(j)));
                 }

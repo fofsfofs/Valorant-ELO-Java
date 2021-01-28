@@ -7,11 +7,15 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,8 +45,6 @@ public class MatchInfo {
         getMatchJson();
         getPlayersInfo();
         setTeamList();
-//        System.out.println(comrades);
-//        System.out.println(enemies);
     }
 
     public LinkedTreeMap addInfo(LinkedTreeMap match) {
@@ -51,6 +53,8 @@ public class MatchInfo {
         match.put("Victory", isVictory());
         match.put("Comrades", comrades);
         match.put("Enemies", enemies);
+        match.put("MatchLength", String.valueOf(getMatchLength()));
+        match.put("MatchDate", getMatchDate());
         return match;
     }
 
@@ -80,7 +84,19 @@ public class MatchInfo {
                 .asJson();
 
         try {
-            JsonReader reader = new JsonReader(new StringReader(matchResponse.getBody().toString()));
+            String matchResponseString = matchResponse.getBody().toString();
+            for (int i = 1; i < 11; i++) {
+                String name = matchResponseString.substring(StringUtils.ordinalIndexOf(matchResponseString, "gameName", i) + 11, StringUtils.ordinalIndexOf(matchResponseString, "tagLine", i) - 3);
+                if (name.contains(" ") && name.split(" ").length >= 2) {
+                    String replacement = "";
+                    for (int j = 0; j < name.split(" ").length; j++) {
+                        replacement += name.split(" ")[j];
+                    }
+                    matchResponseString = matchResponseString.replace(name, replacement);
+                }
+            }
+
+            JsonReader reader = new JsonReader(new StringReader(matchResponseString));
             json = gson.fromJson(reader, Map.class);
             try {
                 Writer writer = new FileWriter(String.format("%s.json", "test"));
@@ -94,6 +110,22 @@ public class MatchInfo {
         }
     }
 
+    public String getMatchDate() {
+        double gameDouble = Double.parseDouble(json.toString().substring(json.toString().indexOf("gameStartMillis") + 16, json.toString().indexOf("provisioningFlowID") - 5)) * Math.pow(10, 12);
+        Long gameLong = (long) gameDouble;
+        LocalDate date = Instant.ofEpochMilli(gameLong).atZone(ZoneId.systemDefault()).toLocalDate();
+        String month = date.getMonth().toString();
+        if (month.length() > 4) {
+            return month.substring(0, 1) + month.substring(1, 3).toLowerCase() + " " + date.getDayOfMonth();
+        } else {
+            return month.substring(0, 1) + month.substring(1).toLowerCase() + " " + date.getDayOfMonth();
+        }
+    }
+
+    private double getMatchLength() {
+        return Math.round(Double.parseDouble(json.toString().substring(json.toString().indexOf("gameLengthMillis") + 17, json.toString().indexOf("gameStartMillis") - 2)) / 60000);
+    }
+
     private void getPlayersInfo() {
         try {
             for (int i = 0; i < 10; i++) {
@@ -102,7 +134,6 @@ public class MatchInfo {
                     players.add(player);
                     if (player.get("subject").equals(uID)) {
                         user = player;
-//                        System.out.println(getAgent(player));
                         team = getTeam(user);
                     }
                 } catch (JsonSyntaxException j) {
@@ -157,7 +188,12 @@ public class MatchInfo {
     private void setTeamList() {
         for (Map player : players) {
             Map<String, String> info = new HashMap<>();
-            info.put("Name", (String) player.get("gameName"));
+            if (((String) player.get("gameName")).length() > 10) {
+                info.put("Name", ((String) player.get("gameName")).substring(0, 10));
+            } else {
+                info.put("Name", (String) player.get("gameName"));
+            }
+
             info.put("Agent", getAgent(player));
             info.put("KDA", getKDA(player));
             info.put("Score", String.valueOf(getPlayerScore(player)[3]));

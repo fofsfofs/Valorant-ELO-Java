@@ -14,6 +14,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.gillius.jfxutils.chart.ChartPanManager;
@@ -26,6 +29,7 @@ import java.util.List;
 public class Graphing {
 
     private Matches matches;
+    static StackPane root = new StackPane();
     private Stage stage;
     private Rank rank;
     private HostServices hostServices;
@@ -57,7 +61,7 @@ public class Graphing {
 
         List<Integer> eloHistory = rank.getELOHistory();
         List<Integer> gainLoss = rank.getGainLoss();
-        List<String> maps = rank.getMaps();
+        List<String> matchIDS = rank.getMatchIDs();
 
         double upper = 0;
         double lower = 0;
@@ -136,7 +140,7 @@ public class Graphing {
                 }
                 XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
                 XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
-                addHover(i, data, data2, positive, gainLoss, maps);
+                addHover(i, data, data2, positive, gainLoss, matchIDS);
 
             } else if (gainLoss.get(i) < 0) {
                 if (i != 0 && gainLoss.get(i - 1) >= 0) {
@@ -145,7 +149,7 @@ public class Graphing {
                 }
                 XYChart.Data data = new XYChart.Data(i + 1, eloHistory.get(i));
                 XYChart.Data data2 = new XYChart.Data(i + 2, eloHistory.get(i + 1));
-                addHover(i, data, data2, negative, gainLoss, maps);
+                addHover(i, data, data2, negative, gainLoss, matchIDS);
             }
         }
         positiveList.add(positive);
@@ -184,9 +188,11 @@ public class Graphing {
         if (!Login.getProfileMenu().getItems().get(2).getText().equals("Profile 3")) {
             addProfile.setDisable(true);
         }
+
+        resetMatchInfo();
+
         VBox vbox = new VBox();
-        vbox.getChildren().add(menuBar);
-        vbox.getChildren().add(sc);
+        vbox.getChildren().addAll(menuBar, sc, root);
 
         resetView.setOnAction(__ -> {
             if (modeMenu.getText().equals("Light Mode")) {
@@ -198,6 +204,7 @@ public class Graphing {
         });
 
         refresh.setOnAction(__ -> {
+            resetMatchInfo();
             matches.updateMatchHistory();
             updateRank();
             if (modeMenu.getText().equals("Light Mode")) {
@@ -242,7 +249,7 @@ public class Graphing {
             }
         });
 
-        Scene scene = new Scene(vbox, 800, 450);
+        Scene scene = new Scene(vbox, 1000, 800);
 
         Platform.runLater(() -> {
             setColors(positiveList, "green");
@@ -274,15 +281,24 @@ public class Graphing {
         return scene;
     }
 
-    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g, List<String> maps) {
+    public void addHover(int i, XYChart.Data data1, XYChart.Data data2, XYChart.Series s, List<Integer> g, List<String> matchIDs) {
         if (i != 0) {
-            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1), maps.get(i)));
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), g.get(i - 1), matchIDs.get(i)));
         } else {
-            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0, maps.get(i)));
+            data1.setNode(new HoveredThresholdNode((Integer) data1.getXValue(), (Integer) data1.getYValue(), rank.getRank((Integer) data1.getYValue()), 0, matchIDs.get(i)));
         }
-        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i), maps.get(i + 1)));
+        data2.setNode(new HoveredThresholdNode((Integer) data2.getXValue(), (Integer) data2.getYValue(), rank.getRank((Integer) data2.getYValue()), g.get(i), matchIDs.get(i + 1)));
         s.getData().add(data1);
         s.getData().add(data2);
+    }
+
+    private void resetMatchInfo() {
+        root.getChildren().clear();
+        Text defaultText = new Text();
+        defaultText.setText("\n\n\nHover over a match point to display match details");
+        defaultText.setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC_BOLD.TTF"), 35));
+        defaultText.setFill(Color.WHITE);
+        root.getChildren().add(defaultText);
     }
 
     public void setColors(List list, String color) {
@@ -312,12 +328,14 @@ public class Graphing {
     }
 
     static class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(int x, int value, String rank, int change, String map) {
+        HoveredThresholdNode(int x, int value, String rank, int change, String matchID) {
             setPrefSize(10, 10);
 
-            final Label label = createDataThresholdLabel(x, value, rank, change, map);
+            final Label label = createDataThresholdLabel(x, value, rank, change, matchID);
 
             setOnMouseEntered(mouseEvent -> {
+                root.getChildren().clear();
+                DisplayMatch dm = new DisplayMatch(matchID, root);
                 getChildren().setAll(label);
                 setCursor(Cursor.NONE);
                 toFront();
@@ -328,12 +346,12 @@ public class Graphing {
             });
         }
 
-        private Label createDataThresholdLabel(int x, int value, String rank, int change, String map) {
+        private Label createDataThresholdLabel(int x, int value, String rank, int change, String matchID) {
             Label label;
             if (x != 1) {
-                label = new Label(String.format("Match: %d\nELO: %d\n%s\nGain/Loss: %d\n%s", x, value, rank, change, map));
+                label = new Label(String.format("Match: %d\nELO: %d\n%s\nGain/Loss: %d", x, value, rank, change));
             } else {
-                label = new Label(String.format("Match: %d\nELO: %d\n%s\n%s", x, value, rank, map));
+                label = new Label(String.format("Match: %d\nELO: %d\n%s", x, value, rank));
             }
             if (change >= 0) {
                 label.getStyleClass().addAll("default-color2", "chart-line-symbol");

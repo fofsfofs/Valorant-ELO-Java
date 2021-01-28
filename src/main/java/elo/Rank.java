@@ -40,23 +40,6 @@ public class Rank {
         }
     }
 
-    enum Maps {
-        Ascent("Ascent", "Ascent"),
-        Bind("Duality", "Bind"),
-        Icebox("Port", "Icebox"),
-        Haven("Triad", "Haven"),
-        Split("Bonsai", "Split");
-
-        private String cn;
-        private String rn;
-
-        Maps(String codeName, String realName) {
-            this.cn = codeName;
-            this.rn = realName;
-        }
-
-    }
-
     private Matches matches;
 
     public Rank(Matches matches) {
@@ -71,8 +54,8 @@ public class Rank {
             String mapStr = mapID.substring(mapID.lastIndexOf("/") + 1);
 
             for (Maps m : Maps.values()) {
-                if (m.cn.equals(mapStr)) {
-                    maps.add(m.rn);
+                if (m.getCodeName().equals(mapStr)) {
+                    maps.add(m.getRealName());
                 }
             }
         }
@@ -122,6 +105,18 @@ public class Rank {
     public String getCurrentRank() {
         return getRank(getCurrentELO());
     }
+
+    public List getMatchIDs() {
+        List<String> matchIDs = new ArrayList<>();
+        ArrayList<LinkedTreeMap> latestMatches = matches.loadHistory();
+
+        for (LinkedTreeMap match : latestMatches) {
+            matchIDs.add((String) match.get("MatchID"));
+        }
+        Collections.reverse(matchIDs);
+        return matchIDs;
+    }
+
 
     public String getRank(int elo) {
         for (Ranks r : Ranks.values()) {
