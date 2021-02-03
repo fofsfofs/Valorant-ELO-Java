@@ -11,7 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kong.unirest.Cookies;
@@ -56,7 +55,8 @@ class Login {
             } else {
                 stage.getIcons().remove(0);
                 stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + new Rank(m).getCurrentRank() + ".png")));
-                Graphing graph = new Graphing(m, stage, hostServices);
+                Store store = new Store(accessToken, entitlementToken, userID);
+                Graphing graph = new Graphing(m, stage, store, hostServices);
             }
 
         } else {
@@ -99,7 +99,7 @@ class Login {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Text scenetitle = new Text("Valorant ELO Tracker");
-        scenetitle.setFont(Font.font("Tacoma", FontWeight.NORMAL, 30));
+        scenetitle.setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/Valorant_Font.ttf"), 30));
         grid.add(scenetitle, 0, 0, 2, 1);
 
         Label userName = new Label("Riot ID:");

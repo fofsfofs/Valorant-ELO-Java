@@ -33,13 +33,15 @@ public class Graphing {
     private Matches matches;
     static StackPane root = new StackPane();
     private Stage stage;
+    private Store store;
     private Rank rank;
     private HostServices hostServices;
     private Scene scene;
 
-    public Graphing(Matches m, Stage s, HostServices hs) {
+    public Graphing(Matches m, Stage s, Store store, HostServices hs) {
         this.matches = m;
         this.stage = s;
+        this.store = store;
         this.hostServices = hs;
         updateRank();
         createGraph("Dark Mode");
@@ -179,12 +181,13 @@ public class Graphing {
         MenuItem signOut = new MenuItem("Sign out");
         MenuItem exit = new MenuItem("Exit");
         MenuItem addProfile = new MenuItem("Add Profile");
+        MenuItem myShop = new MenuItem("My Shop");
         MenuItem resetView = new MenuItem("Reset View");
         resetView.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.ALT_DOWN));
         MenuBar menuBar = new MenuBar();
         Menu file = new Menu("Options");
         Menu zoom = new Menu("Zoom: 100.00%");
-        file.getItems().addAll(refresh, modeMenu, addProfile, signOut, about, exit);
+        file.getItems().addAll(refresh, modeMenu, addProfile, myShop, signOut, about, exit);
         zoom.getItems().add(resetView);
         menuBar.getMenus().addAll(file, Login.getProfileMenu(), zoom);
         if (!Login.getProfileMenu().getItems().get(2).getText().equals("Profile 3")) {
@@ -224,6 +227,20 @@ public class Graphing {
         addProfile.setOnAction(__ -> {
             stage.close();
             Platform.runLater(() -> new Program().start(new Stage()));
+        });
+
+        myShop.setOnAction(__ -> {
+            VBox vBox = new VBox();
+            Stage stage = new Stage();
+            stage.setTitle("My New Stage Title");
+            stage.setScene(new Scene(vBox, 150, 80));
+            Text[] labels = new Text[4];
+            for (int i = 0; i < 4; i++) {
+                labels[i] = new Text();
+                labels[i].setText(store.getItemNames().get(i));
+                vBox.getChildren().add(labels[i]);
+            }
+            stage.show();
         });
 
         signOut.setOnAction(__ ->
