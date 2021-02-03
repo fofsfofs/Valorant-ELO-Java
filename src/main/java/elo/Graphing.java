@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -231,16 +232,18 @@ public class Graphing {
 
         myShop.setOnAction(__ -> {
             VBox vBox = new VBox();
-            Stage stage = new Stage();
-            stage.setTitle("My New Stage Title");
-            stage.setScene(new Scene(vBox, 150, 80));
+            Stage shopStage = new Stage();
+            shopStage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
+            shopStage.setTitle("My Shop");
+            shopStage.setScene(new Scene(vBox, 275, 150));
             Text[] labels = new Text[4];
             for (int i = 0; i < 4; i++) {
                 labels[i] = new Text();
                 labels[i].setText(store.getItemNames().get(i));
+                labels[i].setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC.TTF"), 25));
                 vBox.getChildren().add(labels[i]);
             }
-            stage.show();
+            shopStage.show();
         });
 
         signOut.setOnAction(__ ->
