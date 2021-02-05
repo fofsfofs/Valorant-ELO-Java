@@ -235,11 +235,16 @@ public class Graphing {
             Stage shopStage = new Stage();
             shopStage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
             shopStage.setTitle("My Shop");
-            shopStage.setScene(new Scene(vBox, 275, 150));
+            shopStage.setScene(new Scene(vBox, 300, 130));
             Text[] labels = new Text[4];
             for (int i = 0; i < 4; i++) {
                 labels[i] = new Text();
-                labels[i].setText(store.getItemNames().get(i));
+                String itemName = store.getItemNames().get(i);
+                if (itemName.contains("Gravitational")) {
+                    labels[i].setText("G.U.N " + itemName.split(" ")[itemName.split(" ").length - 1]);
+                } else {
+                    labels[i].setText(store.getItemNames().get(i));
+                }
                 labels[i].setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC.TTF"), 25));
                 vBox.getChildren().add(labels[i]);
             }

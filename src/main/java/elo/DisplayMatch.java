@@ -87,6 +87,12 @@ public class DisplayMatch {
             comradeScore = initializeMiddleText("  " + score.substring(0, score.indexOf("-")), Color.rgb(95, 204, 116));
         }
 
+        if (date.length() == 5) {
+            dateText = initializeMiddleText("  " + date, Color.WHITE);
+        } else {
+            dateText = initializeMiddleText(" " + date, Color.WHITE);
+        }
+
         textFlowPane.getChildren().addAll(comradeScore, dash, enemyScore);
         middleBox.setPadding(new Insets(125, 0, 0, 0));
         middleBox.getChildren().addAll(textFlowPane, dateText, lengthText);
