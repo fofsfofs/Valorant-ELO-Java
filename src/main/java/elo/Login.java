@@ -6,14 +6,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kong.unirest.Cookies;
+import org.controlsfx.control.textfield.CustomPasswordField;
+import org.controlsfx.control.textfield.CustomTextField;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -90,39 +94,42 @@ class Login {
         profile.getItems().addAll(p1, p2, p3);
         reg.getItems().addAll(r1, r2, r3, r4);
         toggleGroup.getToggles().addAll(r1, r2, r3, r4);
-        GridPane grid = new GridPane();
-        root.getChildren().addAll(toolbar, grid);
 
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Text scenetitle = new Text("Valorant ELO Tracker");
-        scenetitle.setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/Valorant_Font.ttf"), 30));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        Text title = new Text("Valorant ELO Tracker");
+        title.setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/Valorant_Font.ttf"), 30));
 
-        Label userName = new Label("Riot ID:");
-        grid.add(userName, 0, 1);
+        VBox top = new VBox();
+        HBox titleBox = new HBox();
+        Region reg1 = new Region();
+        Region reg2 = new Region();
+        HBox.setHgrow(reg1, Priority.ALWAYS);
+        HBox.setHgrow(reg2, Priority.ALWAYS);
+        titleBox.getChildren().addAll(reg1, title, reg2);
+        top.setSpacing(25);
+        top.getChildren().addAll(toolbar, titleBox);
 
-        TextField userTextField = new TextField("");
-        grid.add(userTextField, 1, 1);
+        CustomTextField usernameBox = new CustomTextField();
+        usernameBox.setPromptText("Riot ID");
+        Image userImage = new Image(Program.class.getResourceAsStream("/user.png"));
+        ImageView userImageView = new ImageView();
+        userImageView.setImage(userImage);
+        usernameBox.setLeft(userImageView);
+        usernameBox.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
 
-        Label pw = new Label("Password:");
-        grid.add(pw, 0, 2);
-
-        PasswordField pwBox = new PasswordField();
-        grid.add(pwBox, 1, 2);
+        CustomPasswordField pwBox = new CustomPasswordField();
+        pwBox.setPromptText("Password");
+        Image lockImage = new Image(Program.class.getResourceAsStream("/lock.png"));
+        ImageView lockImageView = new ImageView();
+        lockImageView.setImage(lockImage);
+        pwBox.setLeft(lockImageView);
+        pwBox.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
 
         CheckBox cb = new CheckBox("Save login to profile");
-        grid.add(cb, 0, 5);
-
-        Label version = new Label("v" + Program.version);
-        grid.add(version, 0, 6);
 
         if ((new File("profile.txt")).exists() && !profileExists("Profile 1")) {
             Login.setUsernameAndPass(getRemembered(1));
-            userTextField.setText(username);
+            usernameBox.setText(username);
             pwBox.setText(password);
             cb.setSelected(true);
             updateProfileMenu(p2, 2);
@@ -137,11 +144,25 @@ class Login {
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
+
+        HBox bottomMiddle = new HBox();
+        bottomMiddle.setSpacing(95);
+        bottomMiddle.getChildren().addAll(cb, btn);
+        VBox middle = new VBox();
+        middle.setPadding(new Insets(10, 75, 20, 75));
+        middle.setSpacing(20);
+        middle.getChildren().addAll(usernameBox, pwBox, bottomMiddle);
+
+        Label version = new Label("v" + Program.version);
+        HBox bottom = new HBox();
+        bottom.setPadding(new Insets(5));
+        bottom.getChildren().addAll(version);
 
         setProfileAction(p1, 1);
         setProfileAction(p2, 2);
         setProfileAction(p3, 3);
+
+        root.getChildren().addAll(top, middle, bottom);
 
         r1.setOnAction(__ ->
         {
@@ -164,16 +185,16 @@ class Login {
         });
 
         btn.setOnAction(e -> {
-            signInLogic(cb, userTextField.getText(), pwBox.getText());
+            signInLogic(cb, usernameBox.getText(), pwBox.getText());
         });
 
         pwBox.setOnKeyPressed(ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) {
-                signInLogic(cb, userTextField.getText(), pwBox.getText());
+                signInLogic(cb, usernameBox.getText(), pwBox.getText());
             }
         });
 
-        Scene login = new Scene(root, 425, 300);
+        Scene login = new Scene(root, 425, 250);
         stage.setScene(login);
         stage.setTitle("Login");
         stage.setResizable(false);

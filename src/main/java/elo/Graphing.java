@@ -276,7 +276,7 @@ public class Graphing {
             }
         });
 
-        Scene scene = new Scene(vbox, 1000, 800);
+        Scene scene = new Scene(vbox, 1000, 825);
 
         Platform.runLater(() -> {
             setColors(positiveList, "green");
