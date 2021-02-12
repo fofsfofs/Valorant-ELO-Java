@@ -3,11 +3,18 @@ package elo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +35,7 @@ public class Matches {
         this.uID = userID;
         this.user = username;
         this.region = region;
-        updateMatchHistory();
+//        updateMatchHistory();
     }
 
 
@@ -89,33 +96,38 @@ public class Matches {
         return null;
     }
 
-    public void updateMatchHistory() {
+    public Task updateMatchHistory() {
         ArrayList matchHistory = loadHistory();
-
-
-        for (int i = 0; i < 1; i++) {
-            ArrayList<LinkedTreeMap> allMatches = getMatches(i * 20);
-            for (int j = 0; j < allMatches.size(); j++) {
-                LinkedTreeMap match = allMatches.get(j);
-                String id = (String) match.get("MatchID");
-                if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchIDs.contains(id)) {
-                    MatchInfo mInfo = new MatchInfo((String) allMatches.get(j).get("MatchID"), at, et, uID, region);
-                    newMatches.add(mInfo.addInfo(allMatches.get(j)));
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                for (int i = 0; i < 6; i++) {
+                    ArrayList<LinkedTreeMap> allMatches = getMatches(i * 20);
+                    for (int j = 0; j < allMatches.size(); j++) {
+                        LinkedTreeMap match = allMatches.get(j);
+                        String id = (String) match.get("MatchID");
+                        if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchIDs.contains(id)) {
+                            MatchInfo mInfo = new MatchInfo((String) allMatches.get(j).get("MatchID"), at, et, uID, region);
+                            newMatches.add(mInfo.addInfo(allMatches.get(j)));
+                        }
+                    }
+                    if (i != 0) {
+                        updateProgress(i, 5);
+                    }
                 }
+                newMatches.addAll(matchHistory);
 
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                try {
+                    Writer writer = new FileWriter(String.format("%s.json", user));
+                    gson.toJson(newMatches, writer);
+                    writer.close();
+                } catch (IOException e) {
+
+                }
+                return null;
             }
-        }
-
-        newMatches.addAll(matchHistory);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            Writer writer = new FileWriter(String.format("%s.json", user));
-            gson.toJson(newMatches, writer);
-            writer.close();
-        } catch (IOException e) {
-
-        }
-        newMatches.clear();
+        };
+        return task;
     }
 }

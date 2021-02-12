@@ -1,6 +1,7 @@
 package elo;
 
 import javafx.application.HostServices;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -19,7 +20,13 @@ import kong.unirest.Cookies;
 import org.controlsfx.control.textfield.CustomPasswordField;
 import org.controlsfx.control.textfield.CustomTextField;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -32,6 +39,7 @@ class Login {
     private static String password;
     private static String username;
     private static Menu profile;
+    private static ProgressBar progressBar = new ProgressBar(0);
     private Stage stage;
     private HostServices hostServices;
     private String region = "na";
@@ -50,18 +58,26 @@ class Login {
 
             Matches m = new Matches(accessToken, entitlementToken, userID, Login.getUsername(), region);
 
-            if (m.loadHistory().isEmpty()) {
-                Alert noMatches = new Alert(Alert.AlertType.WARNING);
-                noMatches.setTitle("No matches found");
-                noMatches.setHeaderText(null);
-                noMatches.setContentText("A competitive match was not found in your last 100 matches.\nYou must also play at least one game after your placements.");
-                noMatches.showAndWait();
-            } else {
-                stage.getIcons().remove(0);
-                stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + new Rank(m).getCurrentRank() + ".png")));
-                Store store = new Store(accessToken, entitlementToken, userID);
-                Graphing graph = new Graphing(m, stage, store, hostServices);
-            }
+            Task task = m.updateMatchHistory();
+            progressBar.progressProperty().bind(task.progressProperty());
+            task.setOnSucceeded(e -> {
+                if (m.loadHistory().isEmpty()) {
+                    Alert noMatches = new Alert(Alert.AlertType.WARNING);
+                    noMatches.setTitle("No matches found");
+                    noMatches.setHeaderText(null);
+                    noMatches.setContentText("A competitive match was not found in your last 100 matches.\nYou must also play at least one game after your placements.");
+                    noMatches.showAndWait();
+                } else {
+                    stage.getIcons().remove(0);
+                    stage.getIcons().add(new Image(Program.class.getResourceAsStream("/" + new Rank(m).getCurrentRank() + ".png")));
+                    Store store = new Store(accessToken, entitlementToken, userID);
+                    progressBar.progressProperty().unbind();
+                    progressBar.setProgress(0);
+                    Graphing graph = new Graphing(m, stage, store, hostServices);
+                }
+            });
+            Thread thread = new Thread(task);
+            thread.start();
 
         } else {
             if (new File("profile.txt").exists()) {
@@ -149,13 +165,14 @@ class Login {
         bottomMiddle.setSpacing(95);
         bottomMiddle.getChildren().addAll(cb, btn);
         VBox middle = new VBox();
+        progressBar.setPrefSize(275, 15);
+        progressBar.getStylesheets().add("progress.css");
         middle.setPadding(new Insets(10, 75, 20, 75));
         middle.setSpacing(20);
-        middle.getChildren().addAll(usernameBox, pwBox, bottomMiddle);
+        middle.getChildren().addAll(usernameBox, pwBox, bottomMiddle, progressBar);
 
         Label version = new Label("v" + Program.version);
         HBox bottom = new HBox();
-        bottom.setPadding(new Insets(5));
         bottom.getChildren().addAll(version);
 
         setProfileAction(p1, 1);
@@ -194,20 +211,11 @@ class Login {
             }
         });
 
-        Scene login = new Scene(root, 425, 250);
+        Scene login = new Scene(root, 425, 280);
         stage.setScene(login);
         stage.setTitle("Login");
         stage.setResizable(false);
         stage.show();
-    }
-
-    private void updateProfileMenu(MenuItem profile, int profNumber) {
-        if (getRemembered(profNumber)[0].equals("Profile " + profNumber)) {
-            profile.setDisable(true);
-        } else {
-            profile.setText(getRemembered(profNumber)[0]);
-            profile.setDisable(false);
-        }
     }
 
     public static String getProfile(int profNumber) {
@@ -404,4 +412,14 @@ class Login {
             e.printStackTrace();
         }
     }
+
+    private void updateProfileMenu(MenuItem profile, int profNumber) {
+        if (getRemembered(profNumber)[0].equals("Profile " + profNumber)) {
+            profile.setDisable(true);
+        } else {
+            profile.setText(getRemembered(profNumber)[0]);
+            profile.setDisable(false);
+        }
+    }
+
 }
