@@ -67,4 +67,8 @@ public class Store {
     public ArrayList<String> getItemNames() {
         return itemNames;
     }
+
+    public ArrayList<String> getItemIDs() {
+        return itemIDs;
+    }
 }

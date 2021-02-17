@@ -192,7 +192,7 @@ class Login {
             }
         });
 
-        Scene login = new Scene(root, 500, 325);
+        Scene login = new Scene(root, 500, 320);
         stage.setScene(login);
         stage.setTitle("Login");
         stage.setResizable(false);

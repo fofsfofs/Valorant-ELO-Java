@@ -12,16 +12,17 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.gillius.jfxutils.chart.ChartPanManager;
@@ -239,19 +240,34 @@ public class Graphing {
             Stage shopStage = new Stage();
             shopStage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
             shopStage.setTitle("My Shop");
-            shopStage.setScene(new Scene(vBox, 300, 130));
             Text[] labels = new Text[4];
+            int imageHeights = 0;
             for (int i = 0; i < 4; i++) {
                 labels[i] = new Text();
+                HBox hBox = new HBox();
+                Region r1 = new Region();
+                Region r2 = new Region();
+                HBox.setHgrow(r1, Priority.ALWAYS);
+                HBox.setHgrow(r2, Priority.ALWAYS);
                 String itemName = store.getItemNames().get(i);
+                String itemID = store.getItemIDs().get(i);
                 if (itemName.contains("Gravitational")) {
                     labels[i].setText("G.U.N " + itemName.split(" ")[itemName.split(" ").length - 1]);
                 } else {
                     labels[i].setText(store.getItemNames().get(i));
                 }
                 labels[i].setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC.TTF"), 25));
-                vBox.getChildren().add(labels[i]);
+                labels[i].setTextAlignment(TextAlignment.CENTER);
+                hBox.getChildren().addAll(r1, labels[i], r2);
+                Image im = new Image(String.format("https://media.valorant-api.com/weaponskinlevels/%s/displayicon.png", itemID.toLowerCase()));
+                imageHeights += im.getHeight();
+                if (im.getHeight() == 0) {
+                    im = new Image(String.format("https://media.valorant-api.com/weaponskinchromas/%s/displayicon.png", itemID.toLowerCase()));
+                }
+                vBox.getChildren().addAll(new ImageView(im), hBox);
             }
+            vbox.setSpacing(10);
+            shopStage.setScene(new Scene(vBox, 500, imageHeights + 125));
             shopStage.show();
         });
 
