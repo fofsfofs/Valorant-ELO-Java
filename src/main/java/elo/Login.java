@@ -7,7 +7,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -17,16 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kong.unirest.Cookies;
-import org.controlsfx.control.textfield.CustomPasswordField;
-import org.controlsfx.control.textfield.CustomTextField;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -125,21 +116,11 @@ class Login {
         top.setSpacing(25);
         top.getChildren().addAll(toolbar, titleBox);
 
-        CustomTextField usernameBox = new CustomTextField();
+        TextField usernameBox = new TextField();
         usernameBox.setPromptText("Riot ID");
-        Image userImage = new Image(Program.class.getResourceAsStream("/user.png"));
-        ImageView userImageView = new ImageView();
-        userImageView.setImage(userImage);
-        usernameBox.setLeft(userImageView);
-        usernameBox.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
 
-        CustomPasswordField pwBox = new CustomPasswordField();
+        PasswordField pwBox = new PasswordField();
         pwBox.setPromptText("Password");
-        Image lockImage = new Image(Program.class.getResourceAsStream("/lock.png"));
-        ImageView lockImageView = new ImageView();
-        lockImageView.setImage(lockImage);
-        pwBox.setLeft(lockImageView);
-        pwBox.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
 
         CheckBox cb = new CheckBox("Save login to profile");
 
@@ -162,10 +143,10 @@ class Login {
         hbBtn.getChildren().add(btn);
 
         HBox bottomMiddle = new HBox();
-        bottomMiddle.setSpacing(95);
+        bottomMiddle.setSpacing(120);
         bottomMiddle.getChildren().addAll(cb, btn);
         VBox middle = new VBox();
-        progressBar.setPrefSize(275, 15);
+        progressBar.setPrefSize(350, 15);
         progressBar.getStylesheets().add("progress.css");
         middle.setPadding(new Insets(10, 75, 20, 75));
         middle.setSpacing(20);
@@ -211,7 +192,7 @@ class Login {
             }
         });
 
-        Scene login = new Scene(root, 425, 280);
+        Scene login = new Scene(root, 500, 325);
         stage.setScene(login);
         stage.setTitle("Login");
         stage.setResizable(false);
