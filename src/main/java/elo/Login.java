@@ -118,9 +118,11 @@ class Login {
 
         TextField usernameBox = new TextField();
         usernameBox.setPromptText("Riot ID");
+        usernameBox.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
 
         PasswordField pwBox = new PasswordField();
         pwBox.setPromptText("Password");
+        pwBox.setStyle("-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);");
 
         CheckBox cb = new CheckBox("Save login to profile");
 
@@ -154,6 +156,7 @@ class Login {
 
         Label version = new Label("v" + Program.version);
         HBox bottom = new HBox();
+        bottom.setPadding(new Insets(5));
         bottom.getChildren().addAll(version);
 
         setProfileAction(p1, 1);

@@ -2,6 +2,7 @@ package elo;
 
 import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -241,14 +242,20 @@ public class Graphing {
             shopStage.getIcons().add(new Image(Program.class.getResourceAsStream("/logo.png")));
             shopStage.setTitle("My Shop");
             Text[] labels = new Text[4];
-            int imageHeights = 0;
+            int totalHeight = 0;
+
             for (int i = 0; i < 4; i++) {
                 labels[i] = new Text();
-                HBox hBox = new HBox();
-                Region r1 = new Region();
-                Region r2 = new Region();
-                HBox.setHgrow(r1, Priority.ALWAYS);
-                HBox.setHgrow(r2, Priority.ALWAYS);
+                HBox textHBox = new HBox();
+                HBox imageHBox = new HBox();
+                Region rightOfImage = new Region();
+                Region leftOfImage = new Region();
+                HBox.setHgrow(rightOfImage, Priority.ALWAYS);
+                HBox.setHgrow(leftOfImage, Priority.ALWAYS);
+                Region rightOfText = new Region();
+                Region leftOfText = new Region();
+                HBox.setHgrow(rightOfText, Priority.ALWAYS);
+                HBox.setHgrow(leftOfText, Priority.ALWAYS);
                 String itemName = store.getItemNames().get(i);
                 String itemID = store.getItemIDs().get(i);
                 if (itemName.contains("Gravitational")) {
@@ -258,16 +265,30 @@ public class Graphing {
                 }
                 labels[i].setFont(Font.loadFont(Program.class.getResourceAsStream("/Fonts/GOTHIC.TTF"), 25));
                 labels[i].setTextAlignment(TextAlignment.CENTER);
-                hBox.getChildren().addAll(r1, labels[i], r2);
+                labels[i].setFill(Color.WHITE);
+                textHBox.getChildren().addAll(leftOfText, labels[i], rightOfText);
+                textHBox.setPadding(new Insets(0, 0, 30, 0));
                 Image im = new Image(String.format("https://media.valorant-api.com/weaponskinlevels/%s/displayicon.png", itemID.toLowerCase()));
-                imageHeights += im.getHeight();
                 if (im.getHeight() == 0) {
                     im = new Image(String.format("https://media.valorant-api.com/weaponskinchromas/%s/displayicon.png", itemID.toLowerCase()));
                 }
-                vBox.getChildren().addAll(new ImageView(im), hBox);
+                ImageView imageView = new ImageView(im);
+                if (im.getHeight() > 300) {
+                    imageView.setFitHeight(im.getHeight() * 0.5);
+                    imageView.setFitWidth(im.getWidth() * 0.5);
+                    totalHeight += im.getHeight() * 0.5 + labels[i].getLayoutBounds().getHeight();
+                } else {
+                    totalHeight += im.getHeight() + labels[i].getLayoutBounds().getHeight();
+                }
+                imageHBox.getChildren().addAll(leftOfImage, imageView, rightOfImage);
+                vBox.getChildren().addAll(imageHBox, textHBox);
             }
+
             vbox.setSpacing(10);
-            shopStage.setScene(new Scene(vBox, 500, imageHeights + 125));
+            Scene shopScene = new Scene(vBox, 512, totalHeight + 100);
+            shopStage.setResizable(false);
+            shopScene.getRoot().setStyle("-fx-background-color: #212121");
+            shopStage.setScene(shopScene);
             shopStage.show();
         });
 
