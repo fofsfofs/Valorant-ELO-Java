@@ -185,10 +185,10 @@ public class MatchInfo {
     private void setTeamList() {
         for (Map player : players) {
             Map<String, String> info = new HashMap<>();
-            if (((String) player.get("gameName")).length() > 10) {
-                info.put("Name", ((String) player.get("gameName")).substring(0, 10));
+            if ((String.valueOf(player.get("gameName"))).length() > 10) {
+                info.put("Name", (String.valueOf(player.get("gameName"))).substring(0, 10));
             } else {
-                info.put("Name", (String) player.get("gameName"));
+                info.put("Name", String.valueOf(player.get("gameName")));
             }
 
             info.put("Agent", getAgent(player));

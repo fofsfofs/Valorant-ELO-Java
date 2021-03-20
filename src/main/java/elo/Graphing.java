@@ -244,7 +244,7 @@ public class Graphing {
             Text[] labels = new Text[4];
             int totalHeight = 0;
 
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < store.getItemNames().size(); i++) {
                 labels[i] = new Text();
                 HBox textHBox = new HBox();
                 HBox imageHBox = new HBox();

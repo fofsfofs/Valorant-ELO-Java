@@ -67,9 +67,6 @@ class Login {
                     Graphing graph = new Graphing(m, stage, store, hostServices);
                 }
             });
-            Thread thread = new Thread(task);
-            thread.start();
-
         } else {
             if (new File("profile.txt").exists()) {
                 signOut(Login.getUsername());

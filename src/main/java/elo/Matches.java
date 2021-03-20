@@ -100,15 +100,15 @@ public class Matches {
         ArrayList matchHistory = loadHistory();
         Task<Void> task = new Task<Void>() {
             @Override
-            protected Void call() throws Exception {
+            protected Void call() {
                 for (int i = 0; i < 6; i++) {
                     ArrayList<LinkedTreeMap> allMatches = getMatches(i * 20);
                     for (int j = 0; j < allMatches.size(); j++) {
                         LinkedTreeMap match = allMatches.get(j);
                         String id = (String) match.get("MatchID");
                         if (!match.get("TierAfterUpdate").toString().equals("0.0") && match.get("CompetitiveMovement").toString().equals("MOVEMENT_UNKNOWN") && !matchIDs.contains(id)) {
-                            MatchInfo mInfo = new MatchInfo((String) allMatches.get(j).get("MatchID"), at, et, uID, region);
-                            newMatches.add(mInfo.addInfo(allMatches.get(j)));
+                            MatchInfo mInfo = new MatchInfo((String) match.get("MatchID"), at, et, uID, region);
+                            newMatches.add(mInfo.addInfo(match));
                         }
                     }
                     if (i != 0) {
